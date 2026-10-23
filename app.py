@@ -29,7 +29,7 @@ st.set_page_config(
 )
 
 # -----------------------------------------------------------------------------
-# DESIGN : Thème clair, moderne, espacé et aéré
+# DESIGN : Thème clair et navigation "Pills" hors du commun
 # -----------------------------------------------------------------------------
 APP_CSS = """
 <style>
@@ -45,7 +45,7 @@ APP_CSS = """
   --muted:#475569;
   --faint:#64748B;
   --accent:#D97706;
-  --accent-soft:rgba(217,119,6,.1);
+  --accent-soft:rgba(217,119,6,.12);
   --ok:#059669;
   --warn:#D97706;
   --bad:#DC2626;
@@ -85,38 +85,50 @@ hr{ border-color:var(--line-soft); }
 .tb-stat b{ display:block; font-family:var(--mono); font-size:1.4rem; font-weight:600; color:var(--text); }
 .tb-stat span{ font-size:.7rem; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); }
 
-/* ---- Navigation aérée et espacée (Onglets professionnels) ---- */
+/* ---- Navigation "Think Outside the Box" (Pills de luxe espacées) ---- */
 [data-baseweb="tab-list"], [role="tablist"]{ 
-  gap: 16px !important; 
-  background: var(--surface) !important; 
-  border: 1px solid var(--line) !important;
-  padding: 10px 16px !important; 
-  border-radius: 14px !important; 
+  gap: 12px !important; 
+  background: transparent !important; 
+  border: none !important;
+  padding: 0 !important; 
+  margin-bottom: 2rem !important; 
   width: 100% !important; 
   display: flex !important;
   justify-content: space-between !important;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-  margin-bottom: 1.5rem !important;
   overflow-x: auto; 
 }
 button[role="tab"]{ 
   flex: 1;
-  height: 44px !important; 
-  padding: 0 16px !important; 
-  border-radius: 10px !important; 
-  background: transparent !important;
+  height: 52px !important; 
+  padding: 0 14px !important; 
+  border-radius: 14px !important; 
+  background: var(--surface) !important;
   color: var(--muted) !important; 
   font-weight: 500; 
-  border: 0 !important; 
+  border: 1px solid var(--line) !important; 
   white-space: nowrap !important;
-  transition: all 0.2s ease;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
-button[role="tab"] p{ color: inherit !important; font-size: 0.95rem !important; font-weight: 500; }
-button[role="tab"]:hover{ color: var(--text) !important; background: rgba(0,0,0,.04) !important; }
-button[role="tab"][aria-selected="true"]{ background: var(--accent) !important; color: #fff !important; font-weight: 600 !important; box-shadow: 0 2px 10px rgba(217,119,6,0.3); }
+button[role="tab"] p{ color: inherit !important; font-size: 0.9rem !important; font-weight: 600; }
+button[role="tab"]:hover{ 
+  border-color: var(--accent) !important; 
+  color: var(--accent) !important; 
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(217,119,6,0.1);
+  background: var(--surface) !important; 
+}
+button[role="tab"][aria-selected="true"]{ 
+  background: var(--accent) !important; 
+  border-color: var(--accent) !important; 
+  color: #fff !important; 
+  font-weight: 600 !important; 
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(217,119,6,0.35); 
+}
 button[role="tab"][aria-selected="true"] p{ color: #fff !important; }
 [data-baseweb="tab-highlight"], [data-baseweb="tab-border"]{ display:none !important; height:0 !important; background:transparent !important; }
-[data-baseweb="tab-panel"]{ padding-top:1.8rem; }
+[data-baseweb="tab-panel"]{ padding-top:0.5rem; }
 
 /* ---- Titres de section ---- */
 .sec{ margin:.2rem 0 1.2rem; }
