@@ -4,10 +4,6 @@ Cotation client, expédition fournisseur, suivi de vol 3D, douane et documents l
 
 Lancer :  pip install "streamlit>=1.40" pandas
           streamlit run app.py
-
-Pour modifier le rendu :
-  - couleurs et polices : bloc :root au début de la constante APP_CSS ci-dessous
-  - thème Streamlit (widgets) : fichier .streamlit/config.toml
 """
 
 import hashlib
@@ -33,28 +29,27 @@ st.set_page_config(
 )
 
 # -----------------------------------------------------------------------------
-# DESIGN : thème sombre, navigation en segments, panneaux, frise de statut
-# Toutes les couleurs et polices se règlent dans le bloc :root.
+# DESIGN : Thème élégant (Bleu ardoise moderne, contrasté et lisible)
 # -----------------------------------------------------------------------------
 APP_CSS = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 :root{
-  --bg:#232E44;
-  --surface:#2D3A54;
-  --surface-2:#364563;
-  --line:#4A5B7E;
-  --line-soft:#3D4D6E;
-  --text:#F2F5FB;
-  --muted:#BAC5DA;
-  --faint:#9AA8C4;
+  --bg:#0F172A;
+  --surface:#1E293B;
+  --surface-2:#334155;
+  --line:#475569;
+  --line-soft:#334155;
+  --text:#F8FAFC;
+  --muted:#94A3B8;
+  --faint:#64748B;
   --accent:#FF7A00;
-  --accent-soft:rgba(255,122,0,.16);
-  --ok:#34C48B;
-  --warn:#F2B03D;
-  --bad:#EF5B5B;
-  --info:#5B9BFF;
+  --accent-soft:rgba(255,122,0,.15);
+  --ok:#10B981;
+  --warn:#F59E0B;
+  --bad:#EF4444;
+  --info:#3B82F6;
   color-scheme:dark;
   --sans:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
   --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
@@ -79,46 +74,46 @@ hr{ border-color:var(--line-soft); }
 
 /* ---- Barre de marque ---- */
 .topbar{ display:flex; justify-content:space-between; align-items:center; gap:1.5rem; flex-wrap:wrap;
-  padding:1.1rem 1.4rem; border:1px solid var(--line-soft); border-radius:14px;
-  background:var(--surface); margin-bottom:1.3rem; }
-.brand{ display:flex; align-items:center; gap:.9rem; }
-.brand-mark{ width:42px; height:42px; border-radius:10px; background:var(--accent-soft);
-  border:1px solid rgba(255,122,0,.35); display:grid; place-items:center; }
-.brand-name{ font-weight:700; font-size:1.25rem; letter-spacing:-.01em; }
-.brand-sub{ color:var(--muted); font-size:.82rem; margin-top:2px; }
-.tb-stats{ display:flex; gap:1.8rem; }
-.tb-stat b{ display:block; font-family:var(--mono); font-size:1.3rem; font-weight:600; }
-.tb-stat span{ font-size:.68rem; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); }
+  padding:1.2rem 1.6rem; border:1px solid var(--line); border-radius:16px;
+  background:var(--surface); margin-bottom:1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+.brand{ display:flex; align-items:center; gap:1rem; }
+.brand-mark{ width:46px; height:46px; border-radius:12px; background:var(--accent-soft);
+  border:1px solid rgba(255,122,0,.4); display:grid; place-items:center; }
+.brand-name{ font-weight:700; font-size:1.35rem; letter-spacing:-.01em; color:#fff; }
+.brand-sub{ color:var(--muted); font-size:.85rem; margin-top:2px; }
+.tb-stats{ display:flex; gap:2rem; }
+.tb-stat b{ display:block; font-family:var(--mono); font-size:1.4rem; font-weight:600; color:var(--text); }
+.tb-stat span{ font-size:.7rem; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); }
 
 /* ---- Navigation (onglets en segments) ---- */
-[data-baseweb="tab-list"], [role="tablist"]{ gap:4px !important; background:var(--surface) !important; border:1px solid var(--line-soft) !important;
-  padding:4px !important; border-radius:12px !important; width:fit-content !important; max-width:100%; overflow-x:auto; }
-button[role="tab"]{ height:38px; padding:0 18px !important; border-radius:8px !important; background:transparent !important;
+[data-baseweb="tab-list"], [role="tablist"]{ gap:6px !important; background:var(--surface) !important; border:1px solid var(--line) !important;
+  padding:6px !important; border-radius:14px !important; width:fit-content !important; max-width:100%; overflow-x:auto; }
+button[role="tab"]{ height:40px; padding:0 20px !important; border-radius:10px !important; background:transparent !important;
   color:var(--muted) !important; font-weight:500; border:0 !important; }
-button[role="tab"] p{ color:inherit !important; font-size:.88rem; }
-button[role="tab"]:hover{ color:var(--text) !important; background:rgba(255,255,255,.07) !important; }
-button[role="tab"][aria-selected="true"]{ background:var(--accent-soft) !important; color:var(--accent) !important; box-shadow:inset 0 0 0 1px rgba(255,122,0,.5) !important; }
+button[role="tab"] p{ color:inherit !important; font-size:.9rem; }
+button[role="tab"]:hover{ color:var(--text) !important; background:rgba(255,255,255,.08) !important; }
+button[role="tab"][aria-selected="true"]{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; box-shadow: 0 2px 10px rgba(255,122,0,0.3); }
 [data-baseweb="tab-highlight"], [data-baseweb="tab-border"]{ display:none !important; height:0 !important; background:transparent !important; }
-[data-baseweb="tab-panel"]{ padding-top:1.6rem; }
+[data-baseweb="tab-panel"]{ padding-top:1.8rem; }
 
 /* ---- Titres de section ---- */
-.sec{ margin:.2rem 0 1.1rem; }
-.sec h3{ margin:0; font-size:1.35rem; font-weight:600; }
-.sec p{ margin:.25rem 0 0; color:var(--muted) !important; font-size:.9rem; }
-.eyebrow{ font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); font-weight:600; margin-bottom:.15rem; }
+.sec{ margin:.2rem 0 1.2rem; }
+.sec h3{ margin:0; font-size:1.4rem; font-weight:600; color:#fff; }
+.sec p{ margin:.3rem 0 0; color:var(--muted) !important; font-size:.92rem; }
+.eyebrow{ font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:600; margin-bottom:.3rem; }
 
 /* ---- Panneaux ---- */
-[class*="st-key-panel_"]{ background:var(--surface); border:1px solid var(--line-soft); border-radius:14px; padding:1.2rem 1.4rem; }
+[class*="st-key-panel_"]{ background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:1.4rem 1.6rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
 
 /* ---- Boutons ---- */
 .stButton > button, .stDownloadButton > button{ width:100%; border-radius:10px; border:1px solid var(--line);
-  background:var(--surface-2); color:var(--text); font-weight:500; padding:.55rem 1rem; transition:border-color .15s, background .15s; }
-.stButton > button:hover, .stDownloadButton > button:hover{ border-color:var(--accent); color:#fff; background:#41537A; }
+  background:var(--surface-2); color:var(--text); font-weight:500; padding:.6rem 1.1rem; transition:all .2s; }
+.stButton > button:hover, .stDownloadButton > button:hover{ border-color:var(--accent); color:#fff; background:#3B4A6B; }
 .stButton > button:focus-visible, .stDownloadButton > button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
-[data-testid="stBaseButton-primary"]{ background:var(--accent) !important; border-color:var(--accent) !important; color:#0A101C !important; font-weight:600 !important; }
+[data-testid="stBaseButton-primary"]{ background:var(--accent) !important; border-color:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
 [data-testid="stBaseButton-primary"]:hover{ background:#FF8F2B !important; }
 
-/* ---- Champs : tous les calques du widget partagent fond et texte ---- */
+/* ---- Champs de saisie ---- */
 [data-testid="stNumberInput"] [data-baseweb], [data-testid="stSelectbox"] [data-baseweb], [data-testid="stTextInput"] [data-baseweb],
 [data-testid="stTextArea"] [data-baseweb], [data-testid="stNumberInputContainer"]{
   background:var(--surface-2) !important; border-color:var(--line) !important; border-radius:10px !important; color:var(--text) !important; }
@@ -129,72 +124,72 @@ input, textarea{ background:transparent !important; color:var(--text) !important
 [data-baseweb="popover"] *{ color:var(--text) !important; }
 [data-baseweb="popover"] [data-baseweb="menu"], [data-baseweb="popover"] ul, [data-baseweb="popover"] li{ background:var(--surface-2) !important; }
 [data-baseweb="popover"] li:hover{ background:var(--surface) !important; }
-textarea{ font-family:var(--mono) !important; font-size:.8rem !important; }
+textarea{ font-family:var(--mono) !important; font-size:.82rem !important; }
 
 /* ---- Alertes, expanders, métriques ---- */
-[data-testid="stAlert"]{ border-radius:10px; border:1px solid var(--line) !important; background:var(--surface-2) !important; }
+[data-testid="stAlert"]{ border-radius:12px; border:1px solid var(--line) !important; background:var(--surface-2) !important; }
 [data-testid="stAlert"] *{ color:var(--text) !important; }
-[data-testid="stExpander"]{ border:1px solid var(--line-soft); border-radius:12px; background:var(--surface); }
+[data-testid="stExpander"]{ border:1px solid var(--line); border-radius:14px; background:var(--surface); }
 [data-testid="stExpander"] details{ background:var(--surface) !important; border:0 !important; }
-[data-testid="stExpander"] summary, [data-testid="stExpander"] summary *{ color:var(--text) !important; }
+[data-testid="stExpander"] summary, [data-testid="stExpander"] summary *{ color:var(--text) !important; font-weight:500; }
 [data-testid="stExpander"] summary:hover, [data-testid="stExpander"] summary:hover *{ color:var(--accent) !important; }
-[data-testid="stMetric"]{ background:var(--surface-2); border:1px solid var(--line-soft); border-radius:10px; padding:.8rem 1rem; }
-[data-testid="stMetricLabel"]{ color:var(--muted); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; }
-[data-testid="stMetricValue"]{ font-family:var(--mono) !important; font-size:1.4rem; }
-.stApp iframe{ border-radius:12px; border:1px solid var(--line-soft); }
+[data-testid="stMetric"]{ background:var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:1rem; }
+[data-testid="stMetricLabel"]{ color:var(--muted); font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; }
+[data-testid="stMetricValue"]{ font-family:var(--mono) !important; font-size:1.5rem; color:#fff !important; }
+.stApp iframe{ border-radius:14px; border:1px solid var(--line); }
 
 /* ---- Frise du processus ---- */
-.pipeline{ display:flex; gap:0; padding:1rem 1.2rem 1.1rem; border:1px solid var(--line-soft); border-radius:14px;
-  background:var(--surface); margin:.4rem 0 1.2rem; overflow-x:auto; }
-.pl-step{ flex:1 0 108px; position:relative; text-align:center; padding:0 .3rem; }
-.pl-step::before{ content:""; position:absolute; top:13px; left:-50%; width:100%; height:2px; background:var(--line); }
+.pipeline{ display:flex; gap:0; padding:1.2rem 1.4rem; border:1px solid var(--line); border-radius:16px;
+  background:var(--surface); margin:.5rem 0 1.4rem; overflow-x:auto; }
+.pl-step{ flex:1 0 110px; position:relative; text-align:center; padding:0 .4rem; }
+.pl-step::before{ content:""; position:absolute; top:15px; left:-50%; width:100%; height:2px; background:var(--line); }
 .pl-step:first-child::before{ display:none; }
 .pl-step.done::before, .pl-step.now::before{ background:var(--accent); }
-.pl-dot{ position:relative; z-index:1; width:28px; height:28px; border-radius:50%; margin:0 auto .5rem; display:grid; place-items:center;
-  font-family:var(--mono); font-size:.72rem; font-weight:600; background:var(--surface-2); border:2px solid var(--line); color:var(--faint); }
-.pl-step.done .pl-dot{ background:var(--accent); border-color:var(--accent); color:#0A101C; }
+.pl-dot{ position:relative; z-index:1; width:30px; height:30px; border-radius:50%; margin:0 auto .6rem; display:grid; place-items:center;
+  font-family:var(--mono); font-size:.75rem; font-weight:600; background:var(--surface-2); border:2px solid var(--line); color:var(--muted); }
+.pl-step.done .pl-dot{ background:var(--accent); border-color:var(--accent); color:#fff; }
 .pl-step.now .pl-dot{ background:var(--bg); border-color:var(--accent); color:var(--accent); box-shadow:0 0 0 5px var(--accent-soft); }
-.pl-label{ font-size:.74rem; color:var(--faint); line-height:1.25; }
-.pl-step.done .pl-label{ color:var(--muted); }
-.pl-step.now .pl-label{ color:var(--text); font-weight:600; }
+.pl-label{ font-size:.76rem; color:var(--muted); line-height:1.3; }
+.pl-step.done .pl-label{ color:var(--text); }
+.pl-step.now .pl-label{ color:#fff; font-weight:600; }
 
 /* ---- Cascade des coûts ---- */
-.ladder{ display:flex; flex-direction:column; gap:.5rem; }
-.rung{ display:grid; grid-template-columns:78px 1fr auto; align-items:center; gap:.9rem; padding:.8rem 1rem;
-  border:1px solid var(--line-soft); border-radius:10px; background:var(--surface-2); }
+.ladder{ display:flex; flex-direction:column; gap:.6rem; }
+.rung{ display:grid; grid-template-columns:85px 1fr auto; align-items:center; gap:1rem; padding:.9rem 1.1rem;
+  border:1px solid var(--line); border-radius:12px; background:var(--surface-2); }
 .rung.off{ opacity:.6; }
 .rung.sel{ border-color:var(--accent); background:var(--accent-soft); }
-.rung-code{ font-family:var(--mono); font-weight:600; font-size:.82rem; color:var(--accent); }
-.rung-label{ font-size:.84rem; color:var(--muted); }
-.rung-label em{ display:block; font-style:normal; font-family:var(--mono); font-size:.72rem; color:var(--faint); margin-top:2px; }
-.rung-amt{ font-family:var(--mono); font-size:1.12rem; font-weight:600; text-align:right; white-space:nowrap; }
-.note{ margin-top:.7rem; font-size:.8rem; color:var(--muted); }
+.rung-code{ font-family:var(--mono); font-weight:600; font-size:.85rem; color:var(--accent); }
+.rung-label{ font-size:.86rem; color:var(--text); }
+.rung-label em{ display:block; font-style:normal; font-family:var(--mono); font-size:.75rem; color:var(--muted); margin-top:2px; }
+.rung-amt{ font-family:var(--mono); font-size:1.15rem; font-weight:600; text-align:right; white-space:nowrap; color:#fff; }
+.note{ margin-top:.8rem; font-size:.82rem; color:var(--muted); }
 
 /* ---- Tuiles de chiffres ---- */
-.stats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:.7rem; }
-.stat{ padding:.8rem 1rem; border:1px solid var(--line-soft); border-radius:10px; background:var(--surface-2); }
-.stat span{ display:block; font-size:.68rem; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); }
-.stat b{ display:block; font-family:var(--mono); font-size:1.2rem; font-weight:600; margin-top:.25rem; }
-.stat em{ display:block; font-style:normal; font-size:.74rem; color:var(--faint); margin-top:2px; }
+.stats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:.8rem; }
+.stat{ padding:1rem 1.1rem; border:1px solid var(--line); border-radius:12px; background:var(--surface-2); }
+.stat span{ display:block; font-size:.7rem; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); }
+.stat b{ display:block; font-family:var(--mono); font-size:1.25rem; font-weight:600; margin-top:.3rem; color:#fff; }
+.stat em{ display:block; font-style:normal; font-size:.76rem; color:var(--muted); margin-top:2px; }
 
 /* ---- Tableaux ---- */
-.tbl{ width:100%; border-collapse:collapse; font-size:.88rem; }
-.tbl th{ text-align:left; font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); font-weight:600; padding:.5rem .7rem; border-bottom:1px solid var(--line); }
-.tbl td{ padding:.6rem .7rem; border-bottom:1px solid var(--line-soft); color:var(--text); }
+.tbl{ width:100%; border-collapse:collapse; font-size:.9rem; }
+.tbl th{ text-align:left; font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:600; padding:.6rem .8rem; border-bottom:1px solid var(--line); }
+.tbl td{ padding:.7rem .8rem; border-bottom:1px solid var(--line-soft); color:var(--text); }
 .tbl td.num, .tbl th.num{ text-align:right; font-family:var(--mono); }
 .tbl td.mono{ color:var(--accent); font-weight:600; }
-.tbl tr.total td{ font-weight:600; border-bottom:none; border-top:1px solid var(--line); }
+.tbl tr.total td{ font-weight:600; border-bottom:none; border-top:1px solid var(--line); color:#fff; }
 
 /* ---- Produits, pastilles, bandeau de vol ---- */
-.prod-name{ font-weight:600; }
-.prod-spec{ font-family:var(--mono); font-size:.76rem; color:var(--muted); margin-top:2px; }
-.chip{ display:inline-block; padding:.15rem .65rem; border-radius:99px; font-size:.72rem; font-weight:600; border:1px solid var(--line); color:var(--muted); }
-.chip.accent{ color:var(--accent); border-color:rgba(255,122,0,.45); background:var(--accent-soft); }
-.chip.ok{ color:var(--ok); border-color:rgba(52,196,139,.4); }
-.banner{ display:flex; align-items:center; gap:.8rem; flex-wrap:wrap; padding:.8rem 1.1rem; border:1px solid var(--line-soft);
-  border-radius:12px; background:var(--surface); }
-.banner .path{ font-family:var(--mono); font-weight:600; font-size:1.05rem; }
-.banner .city{ color:var(--muted); font-size:.88rem; }
+.prod-name{ font-weight:600; color:#fff; }
+.prod-spec{ font-family:var(--mono); font-size:.78rem; color:var(--muted); margin-top:3px; }
+.chip{ display:inline-block; padding:.2rem .7rem; border-radius:99px; font-size:.75rem; font-weight:600; border:1px solid var(--line); color:var(--text); background:var(--surface-2); }
+.chip.accent{ color:var(--accent); border-color:rgba(255,122,0,.5); background:var(--accent-soft); }
+.chip.ok{ color:var(--ok); border-color:rgba(16,185,129,.4); }
+.banner{ display:flex; align-items:center; gap:1rem; flex-wrap:wrap; padding:.9rem 1.2rem; border:1px solid var(--line);
+  border-radius:14px; background:var(--surface); }
+.banner .path{ font-family:var(--mono); font-weight:600; font-size:1.1rem; color:#fff; }
+.banner .city{ color:var(--muted); font-size:.9rem; }
 </style>
 """
 st.markdown(APP_CSS, unsafe_allow_html=True)
@@ -214,11 +209,11 @@ def eyebrow(text: str) -> None:
 
 
 def eur(x: float) -> str:
-    return f"{x:,.2f}".replace(",", " ").replace(".", ",") + " €"
+    return f"{x:,.2f}".replace(",", " ").replace(".", ",") + " €"
 
 
 def num(x: float, dec: int = 0) -> str:
-    return f"{x:,.{dec}f}".replace(",", " ").replace(".", ",")
+    return f"{x:,.{dec}f}".replace(",", " ").replace(".", ",")
 
 
 def stats(items) -> str:
@@ -230,7 +225,6 @@ def stats(items) -> str:
 
 
 def stable_int(text: str, mod: int, offset: int = 0) -> int:
-    """Nombre stable (identique à chaque redémarrage), contrairement à hash()."""
     return int(hashlib.md5(text.encode()).hexdigest(), 16) % mod + offset
 
 
@@ -257,7 +251,6 @@ NO_FLY = [
     {"name": "Zone interdite B", "ring": [[24, 44], [45, 44], [45, 58], [24, 58], [24, 44]]},
 ]
 
-# Flotte annexe
 FLEET = [
     ("AF-801", [139.69, 35.68], [103.81, 1.35], 0.8, 0.10),
     ("BA-249", [-0.12, 51.50], [55.27, 25.20], 0.9, 0.30),
@@ -338,7 +331,7 @@ def build_route(start, end):
 
 
 # -----------------------------------------------------------------------------
-# CARTE MAPLIBRE + DECK.GL (logique inchangée, habillage sombre)
+# CARTE MAPLIBRE + DECK.GL
 # -----------------------------------------------------------------------------
 MAP_HTML = r"""
 <!doctype html><html><head><meta charset="utf-8">
@@ -347,34 +340,33 @@ MAP_HTML = r"""
 <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/deck.gl@8.9.33/dist.min.js"></script>
 <style>
- html,body{margin:0;height:100%;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#232E44;color:#F2F5FB}
+ html,body{margin:0;height:100%;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#0F172A;color:#F8FAFC}
  #map{position:absolute;inset:0}
- .hud{position:absolute;left:14px;right:14px;bottom:14px;background:rgba(35,46,68,.93);color:#F2F5FB;
-   border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 16px;backdrop-filter:blur(10px);box-shadow:0 8px 28px rgba(0,0,0,.4)}
+ .hud{position:absolute;left:14px;right:14px;bottom:14px;background:rgba(30,41,59,.95);color:#F8FAFC;
+   border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 16px;backdrop-filter:blur(10px);box-shadow:0 8px 28px rgba(0,0,0,.45)}
  .row{display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between}
  .kpi{min-width:92px}
- .kpi b{display:block;font-family:'IBM Plex Mono',monospace;font-size:1.1rem;font-weight:600}
- .kpi span{font-size:.64rem;letter-spacing:.09em;opacity:.6;text-transform:uppercase}
- .bar{height:6px;background:rgba(255,255,255,.14);border-radius:99px;margin:10px 0 4px;overflow:hidden}
+ .kpi b{display:block;font-family:'IBM Plex Mono',monospace;font-size:1.15rem;font-weight:600;color:#fff}
+ .kpi span{font-size:.65rem;letter-spacing:.09em;opacity:.7;text-transform:uppercase}
+ .bar{height:6px;background:rgba(255,255,255,.15);border-radius:99px;margin:10px 0 4px;overflow:hidden}
  .bar i{display:block;height:100%;width:0;background:#FF7A00;border-radius:99px}
- button,select{background:#FF7A00;color:#0A101C;border:0;border-radius:8px;padding:8px 14px;font-weight:600;cursor:pointer;font-size:.82rem;font-family:inherit}
- button.alt,select{background:rgba(255,255,255,.1);color:#E7ECF6}
+ button,select{background:#FF7A00;color:#fff;border:0;border-radius:8px;padding:8px 14px;font-weight:600;cursor:pointer;font-size:.82rem;font-family:inherit}
+ button.alt,select{background:rgba(255,255,255,.12);color:#F8FAFC}
  select option{color:#000}
- .flight-card{position:absolute;top:14px;left:14px;background:rgba(35,46,68,.95);color:#F2F5FB;border-radius:12px;overflow:hidden;width:220px;z-index:2;border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(10px)}
+ .flight-card{position:absolute;top:14px;left:14px;background:rgba(30,41,59,.95);color:#F8FAFC;border-radius:12px;overflow:hidden;width:220px;z-index:2;border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(10px)}
  .flight-card img{width:100%;height:95px;object-fit:cover;display:block;border-bottom:2px solid #FF7A00}
  .flight-card-body{padding:10px 12px}
- .flight-card-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:6px}
+ .flight-card-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:6px}
  .flight-card-header h2{margin:0;font-family:'IBM Plex Mono',monospace;font-size:1.05rem;color:#FF7A00}
- .flight-card-header span{font-size:.7rem;opacity:.8}
+ .flight-card-header span{font-size:.7rem;opacity:.85}
  .flight-route{display:flex;justify-content:space-between;align-items:center;margin-top:4px}
  .route-point{text-align:center}
- .route-point b{display:block;font-family:'IBM Plex Mono',monospace;font-size:1.05rem}
- .route-point span{font-size:.65rem;opacity:.65}
+ .route-point b{display:block;font-family:'IBM Plex Mono',monospace;font-size:1.05rem;color:#fff}
+ .route-point span{font-size:.65rem;opacity:.7}
  .route-arrow{color:#FF7A00;font-size:1.1rem;opacity:.9}
- .lbl{background:#fff;color:#0E2A47;font-weight:700;font-size:11px;padding:3px 8px;border-radius:99px;white-space:nowrap}
- .lbl.red{background:#C62828;color:#fff}.lbl.green{background:#2E7D32;color:#fff}
- .fl{font-size:10px;font-weight:600;color:#37474f;text-align:center;white-space:nowrap;text-shadow:0 0 3px #fff}
- body.dark .fl{color:#C9D3E8;text-shadow:0 0 3px #0A101C}
+ .lbl{background:#fff;color:#0F172A;font-weight:700;font-size:11px;padding:3px 8px;border-radius:99px;white-space:nowrap}
+ .lbl.red{background:#EF4444;color:#fff}.lbl.green{background:#10B981;color:#fff}
+ .fl{font-size:10px;font-weight:600;color:#94A3B8;text-align:center;white-space:nowrap;text-shadow:0 0 3px #0F172A}
 </style></head><body>
 <div id="map"></div><div class="flight-card" id="flight-card"></div>
 <div class="hud">
@@ -399,7 +391,6 @@ MAP_HTML = r"""
 </div>
 <script>
 const D=__DATA__, rad=x=>x*Math.PI/180, deg=x=>x*180/Math.PI;
-document.body.className = D.dark ? 'dark' : 'light';
 document.getElementById('flight-card').innerHTML=`${D.photo?`<img src="${D.photo}">`:''}<div class="flight-card-body"><div class="flight-card-header"><h2>${D.flight_num}</h2><span>${D.plane_model}</span></div><div class="flight-route"><div class="route-point"><b>${D.origin.code}</b><span>${D.origin.ville}</span></div><div class="route-arrow">→</div><div class="route-point"><b>${D.dest.code}</b><span>${D.dest.ville}</span></div></div></div>`;
 function hav(a,b){const dl=rad(b[1]-a[1]),dn=rad(b[0]-a[0]);return 12742*Math.asin(Math.sqrt(Math.sin(dl/2)**2+Math.cos(rad(a[1]))*Math.cos(rad(b[1]))*Math.sin(dn/2)**2));}
 function brg(a,b){return(deg(Math.atan2(Math.sin(rad(b[0]-a[0]))*Math.cos(rad(b[1])),Math.cos(rad(a[1]))*Math.sin(rad(b[1]))-Math.sin(rad(a[1]))*Math.cos(rad(b[1]))*Math.cos(rad(b[0]-a[0]))))+360)%360;}
@@ -414,7 +405,6 @@ function lab(txt,cls,lngLat){const e=document.createElement('div');e.className='
 let overlay=null, planeM, fleetM=[], playing=false, t=D.start, follow=true, lastTs=null, curB=0, clock=0, mult=1;
 
 map.on('load',()=>{
-  // 1. Zones d'exclusion aérienne (NO_FLY) sans texte
   if(D.no_fly) {
     D.no_fly.forEach((zone, i) => {
       map.addSource('nofly-'+i, {
@@ -432,17 +422,15 @@ map.on('load',()=>{
     });
   }
 
-  // 2. Trajet principal
   map.addSource('plan',{type:'geojson',data:{type:'Feature',geometry:{type:'LineString',coordinates:D.route}}});
-  map.addLayer({id:'plan',type:'line',source:'plan',paint:{'line-color':'#90A4AE','line-width':3,'line-dasharray':[1.5,2.5]}});
+  map.addLayer({id:'plan',type:'line',source:'plan',paint:{'line-color':'#94A3B8','line-width':3,'line-dasharray':[1.5,2.5]}});
   map.addSource('trail',{type:'geojson',data:{type:'Feature',geometry:{type:'LineString',coordinates:[D.route[0],D.route[0]]}}});
-  map.addLayer({id:'trail',type:'line',source:'trail',paint:{'line-color':'#FF5A00','line-width':5}});
+  map.addLayer({id:'trail',type:'line',source:'trail',paint:{'line-color':'#FF7A00','line-width':5}});
   lab(D.origin.code,'red',[D.origin.lon,D.origin.lat]); lab(D.dest.code,'green',[D.dest.lon,D.dest.lat]);
 
-  // 3. Flotte annexe
   D.fleet.forEach(f=>{
     const w=document.createElement('div');
-    w.innerHTML = `<div class="svg-container">${PLANE('#78909C',20)}</div><div class="fl">${f.code}</div>`;
+    w.innerHTML = `<div class="svg-container">${PLANE('#94A3B8',20)}</div><div class="fl">${f.code}</div>`;
     const m=new maplibregl.Marker({element:w,rotationAlignment:'map',pitchAlignment:'map'}).setLngLat(f.pts[0]).addTo(map);
     fleetM.push({m,path:mk(f.pts),speed:f.speed,phase:f.phase,el:w});
   });
@@ -543,8 +531,7 @@ def render_flight_map(route, origin, dest, start_progress, style_name, flight_nu
 
 
 # -----------------------------------------------------------------------------
-# DOCUMENTS HTML OBLIGATOIRES (Packing list, AWB, DAU)
-# Les documents restent sur fond blanc : ce sont des imitations de documents papier.
+# DOCUMENTS HTML OBLIGATOIRES
 # -----------------------------------------------------------------------------
 def generate_packing_list_html(order, airport, shipper_name):
     rows = ""
@@ -563,7 +550,7 @@ def generate_dau_html(order, airport, shipper_name):
 
 
 # -----------------------------------------------------------------------------
-# DOCUMENTS HTML FACULTATIFS (CE, assurance, POD, CGA)
+# DOCUMENTS HTML FACULTATIFS
 # -----------------------------------------------------------------------------
 def generate_ce_html(order, shipper_name, airport):
     items_list = ", ".join([item['nom'] for item in order['items']])
@@ -761,10 +748,9 @@ def generate_cga_html(order, shipper_name):
 
 
 def paper_preview(html: str) -> str:
-    """Affiche un document blanc comme une feuille posée sur un fond sombre."""
     return (
         '<!doctype html><html><head><meta charset="utf-8"><style>'
-        "html,body{margin:0;background:#232E44}"
+        "html,body{margin:0;background:#1E293B}"
         "body{padding:22px 16px}"
         ".sheet{max-width:840px;margin:0 auto;background:#fff;border-radius:4px;box-shadow:0 18px 50px rgba(0,0,0,.5);overflow:hidden}"
         '</style></head><body><div class="sheet">' + html + "</div></body></html>"
@@ -846,7 +832,7 @@ def order_label(o):
 
 
 # -----------------------------------------------------------------------------
-# EN-TÊTE (rempli en fin de script pour refléter les commandes à jour)
+# EN-TÊTE
 # -----------------------------------------------------------------------------
 header_slot = st.empty()
 
@@ -1233,7 +1219,7 @@ with tab5:
             document_block("cga", "Conditions générales (CGA)", generate_cga_html(o_l, shipper_name), f"CGA_{ref}.html", 420)
 
 # -----------------------------------------------------------------------------
-# EN-TÊTE : rempli ici pour compter les commandes après toutes les actions
+# EN-TÊTE
 # -----------------------------------------------------------------------------
 n_total = len(orders)
 n_flight = sum(1 for x in orders if x["statut"] == FLIGHT_STEP)
