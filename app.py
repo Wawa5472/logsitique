@@ -29,28 +29,28 @@ st.set_page_config(
 )
 
 # -----------------------------------------------------------------------------
-# DESIGN : Thème élégant et correctif absolu des sélecteurs (selectbox)
+# DESIGN : Thème clair, moderne et hautement contrasté
 # -----------------------------------------------------------------------------
 APP_CSS = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 :root{
-  --bg:#0F172A;
-  --surface:#1E293B;
-  --surface-2:#334155;
-  --line:#475569;
-  --line-soft:#334155;
-  --text:#F8FAFC;
-  --muted:#94A3B8;
+  --bg:#F1F5F9;
+  --surface:#FFFFFF;
+  --surface-2:#F8FAFC;
+  --line:#CBD5E1;
+  --line-soft:#E2E8F0;
+  --text:#0F172A;
+  --muted:#475569;
   --faint:#64748B;
-  --accent:#FF7A00;
-  --accent-soft:rgba(255,122,0,.15);
-  --ok:#10B981;
-  --warn:#F59E0B;
-  --bad:#EF4444;
-  --info:#3B82F6;
-  color-scheme:dark;
+  --accent:#D97706;
+  --accent-soft:rgba(217,119,6,.1);
+  --ok:#059669;
+  --warn:#D97706;
+  --bad:#DC2626;
+  --info:#2563EB;
+  color-scheme:light;
   --sans:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
   --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
 }
@@ -75,11 +75,11 @@ hr{ border-color:var(--line-soft); }
 /* ---- Barre de marque ---- */
 .topbar{ display:flex; justify-content:space-between; align-items:center; gap:1.5rem; flex-wrap:wrap;
   padding:1.2rem 1.6rem; border:1px solid var(--line); border-radius:16px;
-  background:var(--surface); margin-bottom:1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+  background:var(--surface); margin-bottom:1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
 .brand{ display:flex; align-items:center; gap:1rem; }
 .brand-mark{ width:46px; height:46px; border-radius:12px; background:var(--accent-soft);
-  border:1px solid rgba(255,122,0,.4); display:grid; place-items:center; }
-.brand-name{ font-weight:700; font-size:1.35rem; letter-spacing:-.01em; color:#fff; }
+  border:1px solid rgba(217,119,6,.3); display:grid; place-items:center; }
+.brand-name{ font-weight:700; font-size:1.35rem; letter-spacing:-.01em; color:var(--text); }
 .brand-sub{ color:var(--muted); font-size:.85rem; margin-top:2px; }
 .tb-stats{ display:flex; gap:2rem; }
 .tb-stat b{ display:block; font-family:var(--mono); font-size:1.4rem; font-weight:600; color:var(--text); }
@@ -91,54 +91,53 @@ hr{ border-color:var(--line-soft); }
 button[role="tab"]{ height:40px; padding:0 20px !important; border-radius:10px !important; background:transparent !important;
   color:var(--muted) !important; font-weight:500; border:0 !important; }
 button[role="tab"] p{ color:inherit !important; font-size:.9rem; }
-button[role="tab"]:hover{ color:var(--text) !important; background:rgba(255,255,255,.08) !important; }
-button[role="tab"][aria-selected="true"]{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; box-shadow: 0 2px 10px rgba(255,122,0,0.3); }
+button[role="tab"]:hover{ color:var(--text) !important; background:rgba(0,0,0,.04) !important; }
+button[role="tab"][aria-selected="true"]{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; box-shadow: 0 2px 10px rgba(217,119,6,0.3); }
 [data-baseweb="tab-highlight"], [data-baseweb="tab-border"]{ display:none !important; height:0 !important; background:transparent !important; }
 [data-baseweb="tab-panel"]{ padding-top:1.8rem; }
 
 /* ---- Titres de section ---- */
 .sec{ margin:.2rem 0 1.2rem; }
-.sec h3{ margin:0; font-size:1.4rem; font-weight:600; color:#fff; }
+.sec h3{ margin:0; font-size:1.4rem; font-weight:600; color:var(--text); }
 .sec p{ margin:.3rem 0 0; color:var(--muted) !important; font-size:.92rem; }
 .eyebrow{ font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:600; margin-bottom:.3rem; }
 
 /* ---- Panneaux ---- */
-[class*="st-key-panel_"]{ background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:1.4rem 1.6rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+[class*="st-key-panel_"]{ background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:1.4rem 1.6rem; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
 
 /* ---- Boutons ---- */
 .stButton > button, .stDownloadButton > button{ width:100%; border-radius:10px; border:1px solid var(--line);
   background:var(--surface-2); color:var(--text); font-weight:500; padding:.6rem 1.1rem; transition:all .2s; }
-.stButton > button:hover, .stDownloadButton > button:hover{ border-color:var(--accent); color:#fff; background:#3B4A6B; }
+.stButton > button:hover, .stDownloadButton > button:hover{ border-color:var(--accent); color:var(--accent); background:#FFF; }
 .stButton > button:focus-visible, .stDownloadButton > button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
 [data-testid="stBaseButton-primary"]{ background:var(--accent) !important; border-color:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
-[data-testid="stBaseButton-primary"]:hover{ background:#FF8F2B !important; }
+[data-testid="stBaseButton-primary"]:hover{ background:#B45309 !important; }
 
-/* ---- CORRECTIF RADICAL POUR LES LISTES DÉROULANTES (SELECTBOX) ---- */
+/* ---- Champs de saisie et listes déroulantes ---- */
 [data-testid="stSelectbox"] div[data-baseweb="select"] {
-  background-color: var(--surface-2) !important;
+  background-color: #FFFFFF !important;
   border-color: var(--line) !important;
   border-radius: 10px !important;
 }
-/* Force le texte sélectionné à s'afficher en blanc bien visible */
 [data-testid="stSelectbox"] div[data-baseweb="select"] * {
-  color: #FFFFFF !important;
-  -webkit-text-fill-color: #FFFFFF !important;
+  color: #0F172A !important;
+  -webkit-text-fill-color: #0F172A !important;
 }
 [data-testid="stNumberInput"] [data-baseweb], [data-testid="stTextInput"] [data-baseweb],
 [data-testid="stTextArea"] [data-baseweb], [data-testid="stNumberInputContainer"]{
-  background:var(--surface-2) !important; border-color:var(--line) !important; border-radius:10px !important; color:var(--text) !important;
+  background:#FFFFFF !important; border-color:var(--line) !important; border-radius:10px !important; color:var(--text) !important;
 }
 input, textarea{ background:transparent !important; color:var(--text) !important; -webkit-text-fill-color:var(--text) !important; caret-color:var(--accent); }
 [data-testid="stNumberInputStepDown"], [data-testid="stNumberInputStepUp"]{ background:transparent !important; color:var(--muted) !important; }
 [data-testid="stSelectbox"] svg, [data-testid="stNumberInput"] svg{ fill:var(--muted) !important; color:var(--muted) !important; }
 
-/* Style du menu popover de sélection ouvert */
-[data-baseweb="popover"] * { color: #FFFFFF !important; }
+/* Menus popover des listes déroulantes */
+[data-baseweb="popover"] * { color: #0F172A !important; }
 [data-baseweb="popover"] [data-baseweb="menu"], [data-baseweb="popover"] ul, [data-baseweb="popover"] li {
-  background-color: var(--surface-2) !important;
+  background-color: #FFFFFF !important;
 }
 [data-baseweb="popover"] li:hover {
-  background-color: var(--surface) !important;
+  background-color: var(--surface-2) !important;
   color: var(--accent) !important;
 }
 textarea{ font-family:var(--mono) !important; font-size:.82rem !important; }
@@ -152,7 +151,7 @@ textarea{ font-family:var(--mono) !important; font-size:.82rem !important; }
 [data-testid="stExpander"] summary:hover, [data-testid="stExpander"] summary:hover *{ color:var(--accent) !important; }
 [data-testid="stMetric"]{ background:var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:1rem; }
 [data-testid="stMetricLabel"]{ color:var(--muted); font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; }
-[data-testid="stMetricValue"]{ font-family:var(--mono) !important; font-size:1.5rem; color:#fff !important; }
+[data-testid="stMetricValue"]{ font-family:var(--mono) !important; font-size:1.5rem; color:var(--text) !important; }
 .stApp iframe{ border-radius:14px; border:1px solid var(--line); }
 
 /* ---- Frise du processus ---- */
@@ -165,10 +164,10 @@ textarea{ font-family:var(--mono) !important; font-size:.82rem !important; }
 .pl-dot{ position:relative; z-index:1; width:30px; height:30px; border-radius:50%; margin:0 auto .6rem; display:grid; place-items:center;
   font-family:var(--mono); font-size:.75rem; font-weight:600; background:var(--surface-2); border:2px solid var(--line); color:var(--muted); }
 .pl-step.done .pl-dot{ background:var(--accent); border-color:var(--accent); color:#fff; }
-.pl-step.now .pl-dot{ background:var(--bg); border-color:var(--accent); color:var(--accent); box-shadow:0 0 0 5px var(--accent-soft); }
+.pl-step.now .pl-dot{ background:#FFFFFF; border-color:var(--accent); color:var(--accent); box-shadow:0 0 0 5px var(--accent-soft); }
 .pl-label{ font-size:.76rem; color:var(--muted); line-height:1.3; }
 .pl-step.done .pl-label{ color:var(--text); }
-.pl-step.now .pl-label{ color:#fff; font-weight:600; }
+.pl-step.now .pl-label{ color:var(--text); font-weight:600; }
 
 /* ---- Cascade des coûts ---- */
 .ladder{ display:flex; flex-direction:column; gap:.6rem; }
@@ -179,14 +178,14 @@ textarea{ font-family:var(--mono) !important; font-size:.82rem !important; }
 .rung-code{ font-family:var(--mono); font-weight:600; font-size:.85rem; color:var(--accent); }
 .rung-label{ font-size:.86rem; color:var(--text); }
 .rung-label em{ display:block; font-style:normal; font-family:var(--mono); font-size:.75rem; color:var(--muted); margin-top:2px; }
-.rung-amt{ font-family:var(--mono); font-size:1.15rem; font-weight:600; text-align:right; white-space:nowrap; color:#fff; }
+.rung-amt{ font-family:var(--mono); font-size:1.15rem; font-weight:600; text-align:right; white-space:nowrap; color:var(--text); }
 .note{ margin-top:.8rem; font-size:.82rem; color:var(--muted); }
 
 /* ---- Tuiles de chiffres ---- */
 .stats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:.8rem; }
 .stat{ padding:1rem 1.1rem; border:1px solid var(--line); border-radius:12px; background:var(--surface-2); }
 .stat span{ display:block; font-size:.7rem; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); }
-.stat b{ display:block; font-family:var(--mono); font-size:1.25rem; font-weight:600; margin-top:.3rem; color:#fff; }
+.stat b{ display:block; font-family:var(--mono); font-size:1.25rem; font-weight:600; margin-top:.3rem; color:var(--text); }
 .stat em{ display:block; font-style:normal; font-size:.76rem; color:var(--muted); margin-top:2px; }
 
 /* ---- Tableaux ---- */
@@ -195,17 +194,17 @@ textarea{ font-family:var(--mono) !important; font-size:.82rem !important; }
 .tbl td{ padding:.7rem .8rem; border-bottom:1px solid var(--line-soft); color:var(--text); }
 .tbl td.num, .tbl th.num{ text-align:right; font-family:var(--mono); }
 .tbl td.mono{ color:var(--accent); font-weight:600; }
-.tbl tr.total td{ font-weight:600; border-bottom:none; border-top:1px solid var(--line); color:#fff; }
+.tbl tr.total td{ font-weight:600; border-bottom:none; border-top:1px solid var(--line); color:var(--text); }
 
 /* ---- Produits, pastilles, bandeau de vol ---- */
-.prod-name{ font-weight:600; color:#fff; }
+.prod-name{ font-weight:600; color:var(--text); }
 .prod-spec{ font-family:var(--mono); font-size:.78rem; color:var(--muted); margin-top:3px; }
 .chip{ display:inline-block; padding:.2rem .7rem; border-radius:99px; font-size:.75rem; font-weight:600; border:1px solid var(--line); color:var(--text); background:var(--surface-2); }
-.chip.accent{ color:var(--accent); border-color:rgba(255,122,0,.5); background:var(--accent-soft); }
-.chip.ok{ color:var(--ok); border-color:rgba(16,185,129,.4); }
+.chip.accent{ color:var(--accent); border-color:rgba(217,119,6,.4); background:var(--accent-soft); }
+.chip.ok{ color:var(--ok); border-color:rgba(5,150,105,.3); }
 .banner{ display:flex; align-items:center; gap:1rem; flex-wrap:wrap; padding:.9rem 1.2rem; border:1px solid var(--line);
   border-radius:14px; background:var(--surface); }
-.banner .path{ font-family:var(--mono); font-weight:600; font-size:1.1rem; color:#fff; }
+.banner .path{ font-family:var(--mono); font-weight:600; font-size:1.1rem; color:var(--text); }
 .banner .city{ color:var(--muted); font-size:.9rem; }
 </style>
 """
@@ -357,33 +356,33 @@ MAP_HTML = r"""
 <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/deck.gl@8.9.33/dist.min.js"></script>
 <style>
- html,body{margin:0;height:100%;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#0F172A;color:#F8FAFC}
+ html,body{margin:0;height:100%;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#F1F5F9;color:#0F172A}
  #map{position:absolute;inset:0}
- .hud{position:absolute;left:14px;right:14px;bottom:14px;background:rgba(30,41,59,.95);color:#F8FAFC;
-   border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 16px;backdrop-filter:blur(10px);box-shadow:0 8px 28px rgba(0,0,0,.45)}
+ .hud{position:absolute;left:14px;right:14px;bottom:14px;background:rgba(255,255,255,.95);color:#0F172A;
+   border:1px solid rgba(0,0,0,.1);border-radius:14px;padding:12px 16px;backdrop-filter:blur(10px);box-shadow:0 8px 28px rgba(0,0,0,.15)}
  .row{display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between}
  .kpi{min-width:92px}
- .kpi b{display:block;font-family:'IBM Plex Mono',monospace;font-size:1.15rem;font-weight:600;color:#fff}
+ .kpi b{display:block;font-family:'IBM Plex Mono',monospace;font-size:1.15rem;font-weight:600;color:#0F172A}
  .kpi span{font-size:.65rem;letter-spacing:.09em;opacity:.7;text-transform:uppercase}
- .bar{height:6px;background:rgba(255,255,255,.15);border-radius:99px;margin:10px 0 4px;overflow:hidden}
- .bar i{display:block;height:100%;width:0;background:#FF7A00;border-radius:99px}
- button,select{background:#FF7A00;color:#fff;border:0;border-radius:8px;padding:8px 14px;font-weight:600;cursor:pointer;font-size:.82rem;font-family:inherit}
- button.alt,select{background:rgba(255,255,255,.12);color:#F8FAFC}
+ .bar{height:6px;background:rgba(0,0,0,.1);border-radius:99px;margin:10px 0 4px;overflow:hidden}
+ .bar i{display:block;height:100%;width:0;background:#D97706;border-radius:99px}
+ button,select{background:#D97706;color:#fff;border:0;border-radius:8px;padding:8px 14px;font-weight:600;cursor:pointer;font-size:.82rem;font-family:inherit}
+ button.alt,select{background:rgba(0,0,0,.08);color:#0F172A}
  select option{color:#000}
- .flight-card{position:absolute;top:14px;left:14px;background:rgba(30,41,59,.95);color:#F8FAFC;border-radius:12px;overflow:hidden;width:220px;z-index:2;border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(10px)}
- .flight-card img{width:100%;height:95px;object-fit:cover;display:block;border-bottom:2px solid #FF7A00}
+ .flight-card{position:absolute;top:14px;left:14px;background:rgba(255,255,255,.95);color:#0F172A;border-radius:12px;overflow:hidden;width:220px;z-index:2;border:1px solid rgba(0,0,0,.1);backdrop-filter:blur(10px)}
+ .flight-card img{width:100%;height:95px;object-fit:cover;display:block;border-bottom:2px solid #D97706}
  .flight-card-body{padding:10px 12px}
- .flight-card-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:6px}
- .flight-card-header h2{margin:0;font-family:'IBM Plex Mono',monospace;font-size:1.05rem;color:#FF7A00}
+ .flight-card-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;border-bottom:1px solid rgba(0,0,0,.1);padding-bottom:6px}
+ .flight-card-header h2{margin:0;font-family:'IBM Plex Mono',monospace;font-size:1.05rem;color:#D97706}
  .flight-card-header span{font-size:.7rem;opacity:.85}
  .flight-route{display:flex;justify-content:space-between;align-items:center;margin-top:4px}
  .route-point{text-align:center}
- .route-point b{display:block;font-family:'IBM Plex Mono',monospace;font-size:1.05rem;color:#fff}
+ .route-point b{display:block;font-family:'IBM Plex Mono',monospace;font-size:1.05rem;color:#0F172A}
  .route-point span{font-size:.65rem;opacity:.7}
- .route-arrow{color:#FF7A00;font-size:1.1rem;opacity:.9}
- .lbl{background:#fff;color:#0F172A;font-weight:700;font-size:11px;padding:3px 8px;border-radius:99px;white-space:nowrap}
- .lbl.red{background:#EF4444;color:#fff}.lbl.green{background:#10B981;color:#fff}
- .fl{font-size:10px;font-weight:600;color:#94A3B8;text-align:center;white-space:nowrap;text-shadow:0 0 3px #0F172A}
+ .route-arrow{color:#D97706;font-size:1.1rem;opacity:.9}
+ .lbl{background:#0F172A;color:#fff;font-weight:700;font-size:11px;padding:3px 8px;border-radius:99px;white-space:nowrap}
+ .lbl.red{background:#DC2626;color:#fff}.lbl.green{background:#059669;color:#fff}
+ .fl{font-size:10px;font-weight:600;color:#475569;text-align:center;white-space:nowrap;text-shadow:0 0 3px #FFF}
 </style></head><body>
 <div id="map"></div><div class="flight-card" id="flight-card"></div>
 <div class="hud">
@@ -430,29 +429,29 @@ map.on('load',()=>{
       });
       map.addLayer({
         'id': 'nofly-fill-'+i, 'type': 'fill', 'source': 'nofly-'+i,
-        'paint': { 'fill-color': '#EF4444', 'fill-opacity': 0.15 }
+        'paint': { 'fill-color': '#DC2626', 'fill-opacity': 0.15 }
       });
       map.addLayer({
         'id': 'nofly-line-'+i, 'type': 'line', 'source': 'nofly-'+i,
-        'paint': { 'line-color': '#B91C1C', 'line-width': 1.5, 'line-dasharray': [4, 4] }
+        'paint': { 'line-color': '#991B1B', 'line-width': 1.5, 'line-dasharray': [4, 4] }
       });
     });
   }
 
   map.addSource('plan',{type:'geojson',data:{type:'Feature',geometry:{type:'LineString',coordinates:D.route}}});
-  map.addLayer({id:'plan',type:'line',source:'plan',paint:{'line-color':'#94A3B8','line-width':3,'line-dasharray':[1.5,2.5]}});
+  map.addLayer({id:'plan',type:'line',source:'plan',paint:{'line-color':'#64748B','line-width':3,'line-dasharray':[1.5,2.5]}});
   map.addSource('trail',{type:'geojson',data:{type:'Feature',geometry:{type:'LineString',coordinates:[D.route[0],D.route[0]]}}});
-  map.addLayer({id:'trail',type:'line',source:'trail',paint:{'line-color':'#FF7A00','line-width':5}});
+  map.addLayer({id:'trail',type:'line',source:'trail',paint:{'line-color':'#D97706','line-width':5}});
   lab(D.origin.code,'red',[D.origin.lon,D.origin.lat]); lab(D.dest.code,'green',[D.dest.lon,D.dest.lat]);
 
   D.fleet.forEach(f=>{
     const w=document.createElement('div');
-    w.innerHTML = `<div class="svg-container">${PLANE('#94A3B8',20)}</div><div class="fl">${f.code}</div>`;
+    w.innerHTML = `<div class="svg-container">${PLANE('#64748B',20)}</div><div class="fl">${f.code}</div>`;
     const m=new maplibregl.Marker({element:w,rotationAlignment:'map',pitchAlignment:'map'}).setLngLat(f.pts[0]).addTo(map);
     fleetM.push({m,path:mk(f.pts),speed:f.speed,phase:f.phase,el:w});
   });
 
-  const pe=document.createElement('div');pe.innerHTML=PLANE('#FF7A00',46);
+  const pe=document.createElement('div');pe.innerHTML=PLANE('#D97706',46);
   planeM=new maplibregl.Marker({element:pe}).setLngLat(D.route[0]).addTo(map);
 
   if(D.model && window.deck){
@@ -767,9 +766,9 @@ def generate_cga_html(order, shipper_name):
 def paper_preview(html: str) -> str:
     return (
         '<!doctype html><html><head><meta charset="utf-8"><style>'
-        "html,body{margin:0;background:#1E293B}"
+        "html,body{margin:0;background:#E2E8F0}"
         "body{padding:22px 16px}"
-        ".sheet{max-width:840px;margin:0 auto;background:#fff;border-radius:4px;box-shadow:0 18px 50px rgba(0,0,0,.5);overflow:hidden}"
+        ".sheet{max-width:840px;margin:0 auto;background:#fff;border-radius:4px;box-shadow:0 18px 50px rgba(0,0,0,.15);overflow:hidden}"
         '</style></head><body><div class="sheet">' + html + "</div></body></html>"
     )
 
@@ -1244,7 +1243,7 @@ n_done = sum(1 for x in orders if x["statut"] == len(STATUSES) - 1)
 
 PLANE_MARK = (
     '<svg width="22" height="22" viewBox="0 0 64 64"><path d="M32 2 L37 22 L60 36 L60 42 L37 36 L36 52 L44 58 L44 62 L32 59 '
-    'L20 62 L20 58 L28 52 L27 36 L4 42 L4 36 L27 22 Z" fill="#FF7A00"/></svg>'
+    'L20 62 L20 58 L28 52 L27 36 L4 42 L4 36 L27 22 Z" fill="#D97706"/></svg>'
 )
 header_slot.markdown(
     '<div class="topbar"><div class="brand"><div class="brand-mark">' + PLANE_MARK + "</div>"
