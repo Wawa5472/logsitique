@@ -29,7 +29,7 @@ st.set_page_config(
 )
 
 # -----------------------------------------------------------------------------
-# DESIGN : Thème élégant et lisible (Correction des contrastes de saisie)
+# DESIGN : Thème élégant et correctif absolu des sélecteurs (selectbox)
 # -----------------------------------------------------------------------------
 APP_CSS = """
 <style>
@@ -113,18 +113,34 @@ button[role="tab"][aria-selected="true"]{ background:var(--accent) !important; c
 [data-testid="stBaseButton-primary"]{ background:var(--accent) !important; border-color:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
 [data-testid="stBaseButton-primary"]:hover{ background:#FF8F2B !important; }
 
-/* ---- Correction visibilité des champs de saisie et selects Streamlit ---- */
-[data-testid="stNumberInput"] [data-baseweb], [data-testid="stSelectbox"] [data-baseweb], [data-testid="stTextInput"] [data-baseweb],
+/* ---- CORRECTIF RADICAL POUR LES LISTES DÉROULANTES (SELECTBOX) ---- */
+[data-testid="stSelectbox"] div[data-baseweb="select"] {
+  background-color: var(--surface-2) !important;
+  border-color: var(--line) !important;
+  border-radius: 10px !important;
+}
+/* Force le texte sélectionné à s'afficher en blanc bien visible */
+[data-testid="stSelectbox"] div[data-baseweb="select"] * {
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+}
+[data-testid="stNumberInput"] [data-baseweb], [data-testid="stTextInput"] [data-baseweb],
 [data-testid="stTextArea"] [data-baseweb], [data-testid="stNumberInputContainer"]{
-  background:var(--surface-2) !important; border-color:var(--line) !important; border-radius:10px !important; }
-[data-testid="stSelectbox"] div[data-baseweb="select"] span, [data-testid="stSelectbox"] div[data-baseweb="select"] div {
-  color: #FFFFFF !important; -webkit-text-fill-color: #FFFFFF !important; }
+  background:var(--surface-2) !important; border-color:var(--line) !important; border-radius:10px !important; color:var(--text) !important;
+}
 input, textarea{ background:transparent !important; color:var(--text) !important; -webkit-text-fill-color:var(--text) !important; caret-color:var(--accent); }
 [data-testid="stNumberInputStepDown"], [data-testid="stNumberInputStepUp"]{ background:transparent !important; color:var(--muted) !important; }
 [data-testid="stSelectbox"] svg, [data-testid="stNumberInput"] svg{ fill:var(--muted) !important; color:var(--muted) !important; }
-[data-baseweb="popover"] *{ color:var(--text) !important; }
-[data-baseweb="popover"] [data-baseweb="menu"], [data-baseweb="popover"] ul, [data-baseweb="popover"] li{ background:var(--surface-2) !important; }
-[data-baseweb="popover"] li:hover{ background:var(--surface) !important; }
+
+/* Style du menu popover de sélection ouvert */
+[data-baseweb="popover"] * { color: #FFFFFF !important; }
+[data-baseweb="popover"] [data-baseweb="menu"], [data-baseweb="popover"] ul, [data-baseweb="popover"] li {
+  background-color: var(--surface-2) !important;
+}
+[data-baseweb="popover"] li:hover {
+  background-color: var(--surface) !important;
+  color: var(--accent) !important;
+}
 textarea{ font-family:var(--mono) !important; font-size:.82rem !important; }
 
 /* ---- Alertes, expanders, métriques ---- */
@@ -1150,7 +1166,7 @@ with tab3:
         render_flight_map(route, a, CDG, start, style_name, flight_num)
 
 # -----------------------------------------------------------------------------
-# 4. DOUANE ET IMPORT (Amélioration du design et des contrastes)
+# 4. DOUANE ET IMPORT
 # -----------------------------------------------------------------------------
 with tab4:
     section("Douane et analyse fiscale", "Estimation des droits et de la TVA à l'importation à Paris CDG.")
