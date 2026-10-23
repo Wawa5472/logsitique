@@ -29,7 +29,7 @@ st.set_page_config(
 )
 
 # -----------------------------------------------------------------------------
-# DESIGN : Thème clair et navigation "Pills" hors du commun
+# DESIGN : Thème clair et navigation "Pills" haut de gamme
 # -----------------------------------------------------------------------------
 APP_CSS = """
 <style>
@@ -861,6 +861,7 @@ if "orders" not in st.session_state:
         "reference": "CMD-AIR-10001",
         "origine": "Chine (Pékin - PEK)",
         "incoterm": "CIP",
+        "assurance_incluse": True,
         "items": [{"nom": "Rétroviseur BUS", "qte": 105, "prix_u": 120, "poids_u": 3.5, "vol_u": 0.03}],
         "poids_reel": 367.5,
         "volume": 3.15,
@@ -878,7 +879,8 @@ orders = st.session_state.orders
 
 
 def order_label(o):
-    return f"{o['reference']} · {AIRPORTS[o['origine']]['code']} → CDG · {STATUSES[o['statut']]}"
+    ass_txt = "🛡️ Assurée" if o.get("assurance_incluse", True) else "⚠️ Sans assurance"
+    return f"{o['reference']} · {AIRPORTS[o['origine']]['code']} → CDG · {ass_txt} · {STATUSES[o['statut']]}"
 
 
 # -----------------------------------------------------------------------------
@@ -898,7 +900,7 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 # 1. COTATION CLIENT
 # -----------------------------------------------------------------------------
 with tab1:
-    section("Cotation fret aérien", "Catalogue, poids taxable IATA et cascade de coûts par Incoterm.")
+    section("Cotation fret aérien", "Catalogue, poids taxable IATA, option d'assurance ad valorem et cascade de coûts par Incoterm.")
 
     with st.expander("Guide des Incoterms"):
         rows = "".join(f'<tr><td class="mono">{k}</td><td>{v}</td></tr>' for k, v in INCOTERM_INFO.items())
@@ -926,10 +928,17 @@ with tab1:
         volume_m3 = sum(item["qte"] * item["vol_u"] for item in selected_items)
 
         with st.container(key="panel_params"):
-            eyebrow("Origine et Incoterm")
+            eyebrow("Origine, Incoterm et Option d'assurance")
             p1, p2 = st.columns(2)
             origine = p1.selectbox("Aéroport de départ (fournisseur)", list(AIRPORTS.keys()), index=1)
             incoterm = p2.selectbox("Incoterm cible", list(INCOTERM_INFO.keys()), index=3)
+
+            # Option d'assurance retrouvée et intégrée
+            assurance_incluse = st.checkbox(
+                "Souscrire une assurance facultés transport (Ad Valorem + 10% de garantie)", 
+                value=True,
+                help="Protège la marchandise contre les risques d'avarie ou de perte totale pendant le vol."
+            )
 
             eyebrow("Poids taxable et tarification")
             poids_volumetrique = volume_m3 * 166.67
@@ -961,13 +970,16 @@ with tab1:
         frais_douane_exp = 65
         thc_dep = 70
         surcharges_compagnie = poids_taxable * (0.85 + 0.15 + 0.05)
-        assurance = 130
+        
+        # Calcul dynamique de l'assurance si cochée
+        montant_assurance = 130 if assurance_incluse else 0.0
+
         taxes_supp = 65
         thc_arr = 55
         post_acheminement = 120
 
         val_fca = valeur_marchandise + frais_pre_t + frais_douane_exp + thc_dep
-        val_cip = val_fca + cout_fret + surcharges_compagnie + assurance
+        val_cip = val_fca + cout_fret + surcharges_compagnie + montant_assurance
         val_dap = val_cip + taxes_supp + thc_arr + post_acheminement
 
         if st.button("Valider la cotation et commander", type="primary"):
@@ -976,14 +988,14 @@ with tab1:
             else:
                 ref = f"CMD-AIR-{random.randint(10000, 99999)}"
                 orders.append({
-                    "reference": ref, "origine": origine, "incoterm": incoterm, "items": selected_items,
-                    "poids_reel": poids_reel, "volume": volume_m3, "poids_taxable": poids_taxable,
+                    "reference": ref, "origine": origine, "incoterm": incoterm, "assurance_incluse": assurance_incluse,
+                    "items": selected_items, "poids_reel": poids_reel, "volume": volume_m3, "poids_taxable": poids_taxable,
                     "fret_aerien": cout_fret + surcharges_compagnie, "cout_total_dap": val_dap,
                     "valeur": valeur_marchandise, "statut": 0, "cree_le": datetime.now(),
                     "docs_generated": False, "carrier_assigned": False,
                     "entrepot": "Non assigné", "manutention": "Standard",
                 })
-                st.success(f"Commande {ref} enregistrée.")
+                st.success(f"Commande {ref} enregistrée avec succès.")
 
     with col_sum:
         with st.container(key="panel_cascade"):
@@ -991,7 +1003,7 @@ with tab1:
             rungs = [
                 (1, "EXW", "Valeur de la marchandise", valeur_marchandise, None),
                 (2, "FCA", "Pré-acheminement, douane export, THC départ", val_fca, val_fca - valeur_marchandise),
-                (3, "CPT / CIP", "Fret aérien, surcharges, assurance", val_cip, val_cip - val_fca),
+                (3, "CPT / CIP", f"Fret aérien, surcharges{f' + assurance ({montant_assurance:.0f} €)' if assurance_incluse else ' (sans assurance)'}", val_cip, val_cip - val_fca),
                 (4, "DAP", "Taxes, THC arrivée, post-acheminement", val_dap, val_dap - val_cip),
             ]
             md(ladder_html(rungs, INCOTERM_RANK[incoterm]))
@@ -1005,7 +1017,7 @@ with tab1:
                 kpis.append(("Coût logistique", f"{((val_cip - valeur_marchandise) / valeur_marchandise) * 100:.1f} %", "CIP rapporté à l'EXW"))
             kpis += [
                 ("Délai estimé", "4 à 6 jours", "porte à porte"),
-                ("Taux d'avarie", "3 %", "standard"),
+                ("Taux d'avarie", "3 %" if not assurance_incluse else "0 % (Couvert)", "sécurité"),
                 ("Bilan carbone", f"{0.45 * (poids_taxable / 1000):.2f} kg", "CO2 estimé"),
             ]
             md(stats(kpis))
@@ -1108,11 +1120,13 @@ with tab2:
             section(f"Récapitulatif interne · {o['reference']}")
 
             lignes_articles_txt = "\n".join([f"- {item['nom']} (x{item['qte']})" for item in o['items']])
+            ass_status_txt = "Souscrite (Ad Valorem)" if o.get("assurance_incluse", True) else "Refusée / Non souscrite"
             facture_txt = f"""======================================================
 FACTURE PROFORMA / COTATION LOGISTIQUE
 ======================================================
 Référence Commande : {o['reference']}
 Incoterm Convenu   : {o['incoterm']}
+Assurance Transport: {ass_status_txt}
 Départ             : {a['ville']} ({a['code']})
 Destination        : Paris (CDG)
 Entrepôt Affecté   : {o.get('entrepot', 'N/A')}
@@ -1142,6 +1156,7 @@ Coût Total Estimé (DAP)  : {o['cout_total_dap']:.2f} EUR
                 "Référence": x["reference"],
                 "Origine": AIRPORTS[x["origine"]]["code"],
                 "Incoterm": x["incoterm"],
+                "Assurance": "Oui" if x.get("assurance_incluse", True) else "Non",
                 "Pièces": sum(i["qte"] for i in x["items"]),
                 "Poids taxable (kg)": round(x["poids_taxable"], 1),
                 "Valeur (EUR)": round(x["valeur"], 2),
@@ -1264,7 +1279,13 @@ with tab5:
         with col_fac:
             eyebrow("Documents facultatifs")
             document_block("ce", "Déclaration de conformité (CE)", generate_ce_html(o_l, shipper_name, a_l), f"Conformite_{ref}.html", 420)
-            document_block("ass", "Attestation d'assurance", generate_assurance_html(o_l, shipper_name), f"Assurance_{ref}.html", 420)
+            
+            # Condition d'affichage de l'attestation d'assurance selon le choix client
+            if o_l.get("assurance_incluse", True):
+                document_block("ass", "Attestation d'assurance", generate_assurance_html(o_l, shipper_name), f"Assurance_{ref}.html", 420)
+            else:
+                st.info("ℹ️ Aucune attestation d'assurance disponible pour cette commande (option non souscrite).")
+
             document_block("pod", "Preuve de livraison (POD)", generate_pod_html(o_l, shipper_name), f"POD_{ref}.html", 420)
             document_block("cga", "Conditions générales (CGA)", generate_cga_html(o_l, shipper_name), f"CGA_{ref}.html", 420)
 
