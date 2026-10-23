@@ -41,16 +41,16 @@ APP_CSS = """
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 :root{
-  --bg:#0A101C;
-  --surface:#111A2B;
-  --surface-2:#16213A;
-  --line:#26355A;
-  --line-soft:#1B2745;
-  --text:#E7ECF6;
-  --muted:#93A1BF;
-  --faint:#66759A;
+  --bg:#232E44;
+  --surface:#2D3A54;
+  --surface-2:#364563;
+  --line:#4A5B7E;
+  --line-soft:#3D4D6E;
+  --text:#F2F5FB;
+  --muted:#BAC5DA;
+  --faint:#9AA8C4;
   --accent:#FF7A00;
-  --accent-soft:rgba(255,122,0,.12);
+  --accent-soft:rgba(255,122,0,.16);
   --ok:#34C48B;
   --warn:#F2B03D;
   --bad:#EF5B5B;
@@ -76,7 +76,7 @@ hr{ border-color:var(--line-soft); }
 /* ---- Barre de marque ---- */
 .topbar{ display:flex; justify-content:space-between; align-items:center; gap:1.5rem; flex-wrap:wrap;
   padding:1.1rem 1.4rem; border:1px solid var(--line-soft); border-radius:14px;
-  background:linear-gradient(180deg,var(--surface),#0E1727); margin-bottom:1.3rem; }
+  background:var(--surface); margin-bottom:1.3rem; }
 .brand{ display:flex; align-items:center; gap:.9rem; }
 .brand-mark{ width:42px; height:42px; border-radius:10px; background:var(--accent-soft);
   border:1px solid rgba(255,122,0,.35); display:grid; place-items:center; }
@@ -87,14 +87,15 @@ hr{ border-color:var(--line-soft); }
 .tb-stat span{ font-size:.68rem; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); }
 
 /* ---- Navigation (onglets en segments) ---- */
-.stTabs [data-baseweb="tab-list"]{ gap:4px; background:var(--surface); border:1px solid var(--line-soft);
-  padding:4px; border-radius:12px; width:fit-content; max-width:100%; overflow-x:auto; }
-.stTabs [data-baseweb="tab"]{ height:38px; padding:0 18px; border-radius:8px; background:transparent;
-  color:var(--muted); font-weight:500; font-size:.88rem; }
-.stTabs [data-baseweb="tab"]:hover{ color:var(--text); background:rgba(255,255,255,.03); }
-.stTabs [aria-selected="true"]{ background:var(--accent-soft); color:var(--accent); box-shadow:inset 0 0 0 1px rgba(255,122,0,.4); }
-.stTabs [data-baseweb="tab-highlight"], .stTabs [data-baseweb="tab-border"]{ display:none; }
-.stTabs [data-baseweb="tab-panel"]{ padding-top:1.6rem; }
+[data-baseweb="tab-list"], [role="tablist"]{ gap:4px !important; background:var(--surface) !important; border:1px solid var(--line-soft) !important;
+  padding:4px !important; border-radius:12px !important; width:fit-content !important; max-width:100%; overflow-x:auto; }
+button[role="tab"]{ height:38px; padding:0 18px !important; border-radius:8px !important; background:transparent !important;
+  color:var(--muted) !important; font-weight:500; border:0 !important; }
+button[role="tab"] p{ color:inherit !important; font-size:.88rem; }
+button[role="tab"]:hover{ color:var(--text) !important; background:rgba(255,255,255,.07) !important; }
+button[role="tab"][aria-selected="true"]{ background:var(--accent-soft) !important; color:var(--accent) !important; box-shadow:inset 0 0 0 1px rgba(255,122,0,.5) !important; }
+[data-baseweb="tab-highlight"], [data-baseweb="tab-border"]{ display:none !important; height:0 !important; background:transparent !important; }
+[data-baseweb="tab-panel"]{ padding-top:1.6rem; }
 
 /* ---- Titres de section ---- */
 .sec{ margin:.2rem 0 1.1rem; }
@@ -108,14 +109,20 @@ hr{ border-color:var(--line-soft); }
 /* ---- Boutons ---- */
 .stButton > button, .stDownloadButton > button{ width:100%; border-radius:10px; border:1px solid var(--line);
   background:var(--surface-2); color:var(--text); font-weight:500; padding:.55rem 1rem; transition:border-color .15s, background .15s; }
-.stButton > button:hover, .stDownloadButton > button:hover{ border-color:var(--accent); color:#fff; background:#1B2948; }
+.stButton > button:hover, .stDownloadButton > button:hover{ border-color:var(--accent); color:#fff; background:#41537A; }
 .stButton > button:focus-visible, .stDownloadButton > button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
 [data-testid="stBaseButton-primary"]{ background:var(--accent) !important; border-color:var(--accent) !important; color:#0A101C !important; font-weight:600 !important; }
 [data-testid="stBaseButton-primary"]:hover{ background:#FF8F2B !important; }
 
 /* ---- Champs ---- */
-[data-baseweb="input"], [data-baseweb="select"] > div, [data-baseweb="textarea"]{ background:var(--surface-2) !important; border-color:var(--line) !important; border-radius:10px !important; }
-[data-testid="stNumberInputContainer"]{ border-radius:10px; }
+[data-baseweb="input"], [data-baseweb="base-input"], [data-baseweb="select"] > div, [data-baseweb="textarea"]{ background:var(--surface-2) !important; border-color:var(--line) !important; border-radius:10px !important; }
+input, textarea, [data-baseweb="select"] div{ color:var(--text) !important; }
+input, textarea{ background:transparent !important; -webkit-text-fill-color:var(--text) !important; caret-color:var(--accent); }
+[data-testid="stNumberInputStepDown"], [data-testid="stNumberInputStepUp"]{ background:transparent !important; color:var(--muted) !important; }
+[data-baseweb="select"] svg{ fill:var(--muted) !important; }
+[data-baseweb="popover"] [data-baseweb="menu"], [data-baseweb="popover"] ul{ background:var(--surface-2) !important; }
+[data-baseweb="popover"] li{ color:var(--text) !important; }
+[data-baseweb="popover"] li:hover, [data-baseweb="popover"] li[aria-selected="true"]{ background:var(--surface) !important; }
 textarea{ font-family:var(--mono) !important; font-size:.8rem !important; }
 [data-testid="stRadio"] label{ color:var(--text); }
 
@@ -147,7 +154,7 @@ textarea{ font-family:var(--mono) !important; font-size:.8rem !important; }
 .ladder{ display:flex; flex-direction:column; gap:.5rem; }
 .rung{ display:grid; grid-template-columns:78px 1fr auto; align-items:center; gap:.9rem; padding:.8rem 1rem;
   border:1px solid var(--line-soft); border-radius:10px; background:var(--surface-2); }
-.rung.off{ opacity:.35; }
+.rung.off{ opacity:.6; }
 .rung.sel{ border-color:var(--accent); background:var(--accent-soft); }
 .rung-code{ font-family:var(--mono); font-weight:600; font-size:.82rem; color:var(--accent); }
 .rung-label{ font-size:.84rem; color:var(--muted); }
@@ -332,9 +339,9 @@ MAP_HTML = r"""
 <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/deck.gl@8.9.33/dist.min.js"></script>
 <style>
- html,body{margin:0;height:100%;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#0A101C;color:#E7ECF6}
+ html,body{margin:0;height:100%;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#232E44;color:#F2F5FB}
  #map{position:absolute;inset:0}
- .hud{position:absolute;left:14px;right:14px;bottom:14px;background:rgba(10,16,28,.9);color:#E7ECF6;
+ .hud{position:absolute;left:14px;right:14px;bottom:14px;background:rgba(35,46,68,.93);color:#F2F5FB;
    border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 16px;backdrop-filter:blur(10px);box-shadow:0 8px 28px rgba(0,0,0,.4)}
  .row{display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between}
  .kpi{min-width:92px}
@@ -345,7 +352,7 @@ MAP_HTML = r"""
  button,select{background:#FF7A00;color:#0A101C;border:0;border-radius:8px;padding:8px 14px;font-weight:600;cursor:pointer;font-size:.82rem;font-family:inherit}
  button.alt,select{background:rgba(255,255,255,.1);color:#E7ECF6}
  select option{color:#000}
- .flight-card{position:absolute;top:14px;left:14px;background:rgba(10,16,28,.92);color:#E7ECF6;border-radius:12px;overflow:hidden;width:220px;z-index:2;border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(10px)}
+ .flight-card{position:absolute;top:14px;left:14px;background:rgba(35,46,68,.95);color:#F2F5FB;border-radius:12px;overflow:hidden;width:220px;z-index:2;border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(10px)}
  .flight-card img{width:100%;height:95px;object-fit:cover;display:block;border-bottom:2px solid #FF7A00}
  .flight-card-body{padding:10px 12px}
  .flight-card-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:6px}
@@ -749,7 +756,7 @@ def paper_preview(html: str) -> str:
     """Affiche un document blanc comme une feuille posée sur un fond sombre."""
     return (
         '<!doctype html><html><head><meta charset="utf-8"><style>'
-        "html,body{margin:0;background:#0D1424}"
+        "html,body{margin:0;background:#232E44}"
         "body{padding:22px 16px}"
         ".sheet{max-width:840px;margin:0 auto;background:#fff;border-radius:4px;box-shadow:0 18px 50px rgba(0,0,0,.5);overflow:hidden}"
         '</style></head><body><div class="sheet">' + html + "</div></body></html>"
@@ -1138,7 +1145,7 @@ with tab3:
                 f'<span class="city">{a["ville"]} vers Paris</span>'
                 f'<span class="chip accent mono">{flight_num}</span></div>'
             )
-        style_name = c2.selectbox("Fond de carte", ["Sombre", "Clair"], key=f"style_sel_{idx}", label_visibility="collapsed")
+        style_name = c2.selectbox("Fond de carte", ["Clair", "Sombre"], key=f"style_sel_{idx}", label_visibility="collapsed")
         st.caption("Le curseur pilote les indicateurs carburant. La carte a sa propre lecture : bouton Lancer, vitesse ×0,5 à ×8.")
 
         if o["statut"] < FLIGHT_STEP:
