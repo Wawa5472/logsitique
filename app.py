@@ -29,7 +29,7 @@ st.set_page_config(
 )
 
 # -----------------------------------------------------------------------------
-# DESIGN : Thème élégant (Bleu ardoise moderne, contrasté et lisible)
+# DESIGN : Thème élégant et lisible (Correction des contrastes de saisie)
 # -----------------------------------------------------------------------------
 APP_CSS = """
 <style>
@@ -113,12 +113,13 @@ button[role="tab"][aria-selected="true"]{ background:var(--accent) !important; c
 [data-testid="stBaseButton-primary"]{ background:var(--accent) !important; border-color:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
 [data-testid="stBaseButton-primary"]:hover{ background:#FF8F2B !important; }
 
-/* ---- Champs de saisie ---- */
+/* ---- Correction visibilité des champs de saisie et selects Streamlit ---- */
 [data-testid="stNumberInput"] [data-baseweb], [data-testid="stSelectbox"] [data-baseweb], [data-testid="stTextInput"] [data-baseweb],
 [data-testid="stTextArea"] [data-baseweb], [data-testid="stNumberInputContainer"]{
-  background:var(--surface-2) !important; border-color:var(--line) !important; border-radius:10px !important; color:var(--text) !important; }
+  background:var(--surface-2) !important; border-color:var(--line) !important; border-radius:10px !important; }
+[data-testid="stSelectbox"] div[data-baseweb="select"] span, [data-testid="stSelectbox"] div[data-baseweb="select"] div {
+  color: #FFFFFF !important; -webkit-text-fill-color: #FFFFFF !important; }
 input, textarea{ background:transparent !important; color:var(--text) !important; -webkit-text-fill-color:var(--text) !important; caret-color:var(--accent); }
-[data-testid="stSelectbox"] [data-baseweb="select"] *{ color:var(--text) !important; }
 [data-testid="stNumberInputStepDown"], [data-testid="stNumberInputStepUp"]{ background:transparent !important; color:var(--muted) !important; }
 [data-testid="stSelectbox"] svg, [data-testid="stNumberInput"] svg{ fill:var(--muted) !important; color:var(--muted) !important; }
 [data-baseweb="popover"] *{ color:var(--text) !important; }
@@ -1149,7 +1150,7 @@ with tab3:
         render_flight_map(route, a, CDG, start, style_name, flight_num)
 
 # -----------------------------------------------------------------------------
-# 4. DOUANE ET IMPORT
+# 4. DOUANE ET IMPORT (Amélioration du design et des contrastes)
 # -----------------------------------------------------------------------------
 with tab4:
     section("Douane et analyse fiscale", "Estimation des droits et de la TVA à l'importation à Paris CDG.")
@@ -1173,7 +1174,7 @@ with tab4:
         ]))
         st.write("")
         with st.container(key="panel_douane"):
-            eyebrow("Détail du calcul")
+            eyebrow("Détail du calcul fiscal")
             md(
                 '<table class="tbl"><thead><tr><th>Ligne</th><th class="num">Montant</th></tr></thead><tbody>'
                 f'<tr><td>Valeur de la marchandise</td><td class="num">{eur(o_d["valeur"])}</td></tr>'
@@ -1185,7 +1186,7 @@ with tab4:
                 f'<tr class="total"><td>Total droits et taxes</td><td class="num">{eur(dd + tva)}</td></tr>'
                 "</tbody></table>"
             )
-        st.caption("Les documents légaux (AWB, DAU, CGA, conformité) sont dans l'onglet Documents légaux.")
+        st.caption("Les documents légaux (AWB, DAU, CGA, conformité) sont consultables et téléchargeables dans l'onglet 'Documents légaux'.")
 
 # -----------------------------------------------------------------------------
 # 5. DOCUMENTS LÉGAUX
