@@ -933,7 +933,6 @@ with tab1:
             origine = p1.selectbox("Aéroport de départ (fournisseur)", list(AIRPORTS.keys()), index=1)
             incoterm = p2.selectbox("Incoterm cible", list(INCOTERM_INFO.keys()), index=3)
 
-            # Option d'assurance retrouvée et intégrée
             assurance_incluse = st.checkbox(
                 "Souscrire une assurance facultés transport (Ad Valorem + 10% de garantie)", 
                 value=True,
@@ -970,8 +969,6 @@ with tab1:
         frais_douane_exp = 65
         thc_dep = 70
         surcharges_compagnie = poids_taxable * (0.85 + 0.15 + 0.05)
-        
-        # Calcul dynamique de l'assurance si cochée
         montant_assurance = 130 if assurance_incluse else 0.0
 
         taxes_supp = 65
@@ -1122,7 +1119,7 @@ with tab2:
             lignes_articles_txt = "\n".join([f"- {item['nom']} (x{item['qte']})" for item in o['items']])
             ass_status_txt = "Souscrite (Ad Valorem)" if o.get("assurance_incluse", True) else "Refusée / Non souscrite"
             facture_txt = f"""======================================================
-FACTURE PROFORMA / COTATION LOGISTIQUE
+FACTURE PROFORMA / COTATION LOGISTIQUE (B2B)
 ======================================================
 Référence Commande : {o['reference']}
 Incoterm Convenu   : {o['incoterm']}
@@ -1144,6 +1141,7 @@ Poids Taxable      : {o['poids_taxable']:.1f} kg
 Valeur Marchandise (EXW) : {o['valeur']:.2f} EUR
 Frais de Fret Aérien     : {o['fret_aerien']:.2f} EUR
 Coût Total Estimé (DAP)  : {o['cout_total_dap']:.2f} EUR
+*(Note B2B : TVA déductible / autoliquidée)*
 ======================================================"""
 
             st.text_area("Aperçu du document de travail", facture_txt, height=250, key=f"txt_area_{idx}")
@@ -1217,7 +1215,7 @@ with tab3:
 # 4. DOUANE ET IMPORT
 # -----------------------------------------------------------------------------
 with tab4:
-    section("Douane et analyse fiscale", "Estimation des droits et de la TVA à l'importation à Paris CDG.")
+    section("Douane et analyse fiscale (B2B)", "Estimation des droits et de la TVA à l'importation à Paris CDG (TVA récupérable / déductible).")
     if not orders:
         st.warning("Aucune commande enregistrée.")
     else:
@@ -1232,13 +1230,13 @@ with tab4:
 
         md(stats([
             ("Incoterm", o_d["incoterm"], f"{a_d['ville']} ({a_d['code']})"),
-            ("Droits de douane", eur(dd), "taux indicatif 4 %"),
-            ("TVA à l'importation", eur(tva), "taux 20 %"),
-            ("Total à régler", eur(dd + tva), "droits + TVA"),
+            ("Droits de douane", eur(dd), "coût réel (4 %)"),
+            ("TVA à l'importation", eur(tva), "récupérable (20 %)"),
+            ("Impact trésorerie net", eur(dd), "hors TVA déductible"),
         ]))
         st.write("")
         with st.container(key="panel_douane"):
-            eyebrow("Détail du calcul fiscal")
+            eyebrow("Détail du calcul fiscal (Contexte B2B)")
             md(
                 '<table class="tbl"><thead><tr><th>Ligne</th><th class="num">Montant</th></tr></thead><tbody>'
                 f'<tr><td>Valeur de la marchandise</td><td class="num">{eur(o_d["valeur"])}</td></tr>'
@@ -1246,11 +1244,11 @@ with tab4:
                 f'<tr><td>Base douanière</td><td class="num">{eur(base_douane)}</td></tr>'
                 f'<tr><td>Droits de douane (4 %)</td><td class="num">{eur(dd)}</td></tr>'
                 f'<tr><td>Base TVA (base douanière + droits)</td><td class="num">{eur(base_tva)}</td></tr>'
-                f'<tr><td>TVA à l\'importation (20 %)</td><td class="num">{eur(tva)}</td></tr>'
-                f'<tr class="total"><td>Total droits et taxes</td><td class="num">{eur(dd + tva)}</td></tr>'
+                f'<tr><td>TVA à l\'importation (20 %) <em>— Déductible</em></td><td class="num">{eur(tva)}</td></tr>'
+                f'<tr class="total"><td>Total droits (à décaisser) + TVA (récupérable)</td><td class="num">{eur(dd + tva)}</td></tr>'
                 "</tbody></table>"
             )
-        st.caption("Les documents légaux (AWB, DAU, CGA, conformité) sont consultables et téléchargeables dans l'onglet 'Documents légaux'.")
+        st.caption("En régime B2B, la TVA due à l'importation est récupérée sur la déclaration de TVA (autoliquidation ou déduction sur CA3), limitant le coût réel aux seuls droits de douane.")
 
 # -----------------------------------------------------------------------------
 # 5. DOCUMENTS LÉGAUX
@@ -1280,7 +1278,6 @@ with tab5:
             eyebrow("Documents facultatifs")
             document_block("ce", "Déclaration de conformité (CE)", generate_ce_html(o_l, shipper_name, a_l), f"Conformite_{ref}.html", 420)
             
-            # Condition d'affichage de l'attestation d'assurance selon le choix client
             if o_l.get("assurance_incluse", True):
                 document_block("ass", "Attestation d'assurance", generate_assurance_html(o_l, shipper_name), f"Assurance_{ref}.html", 420)
             else:
