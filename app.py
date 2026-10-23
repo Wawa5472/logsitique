@@ -55,6 +55,7 @@ APP_CSS = """
   --warn:#F2B03D;
   --bad:#EF5B5B;
   --info:#5B9BFF;
+  color-scheme:dark;
   --sans:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
   --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
 }
@@ -63,12 +64,15 @@ APP_CSS = """
 html, body, .stApp, [data-testid="stAppViewContainer"]{ background:var(--bg); color:var(--text); }
 html, body, .stApp, .stMarkdown, .stMarkdown p, label, input, textarea, button, [data-baseweb]{ font-family:var(--sans) !important; }
 [data-testid="stIconMaterial"], [class*="material-symbols"]{ font-family:'Material Symbols Rounded' !important; }
-.stApp p, .stApp li, .stApp label, .stApp span{ color:inherit; }
+.stApp, [data-testid="stMarkdownContainer"], [data-testid="stMarkdownContainer"] p, [data-testid="stMarkdownContainer"] li,
+[data-testid="stWidgetLabel"], [data-testid="stWidgetLabel"] *, [data-testid="stRadio"] label, [data-testid="stRadio"] label *,
+[data-testid="stSlider"] *, [data-testid="stText"]{ color:var(--text) !important; }
+header[data-testid="stHeader"] *, [data-testid="stToolbar"] *{ color:var(--muted) !important; }
 .block-container{ max-width:1320px; padding-top:1.4rem; padding-bottom:4rem; }
 header[data-testid="stHeader"]{ background:transparent; }
 #MainMenu, footer{ visibility:hidden; }
-h1,h2,h3,h4{ letter-spacing:-.01em; font-weight:600; color:var(--text); }
-[data-testid="stCaptionContainer"]{ color:var(--muted); }
+h1,h2,h3,h4,h5,h6{ letter-spacing:-.01em; font-weight:600; color:var(--text) !important; }
+[data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] *{ color:var(--muted) !important; }
 hr{ border-color:var(--line-soft); }
 .mono{ font-family:var(--mono) !important; }
 .acc{ color:var(--accent); }
@@ -100,7 +104,7 @@ button[role="tab"][aria-selected="true"]{ background:var(--accent-soft) !importa
 /* ---- Titres de section ---- */
 .sec{ margin:.2rem 0 1.1rem; }
 .sec h3{ margin:0; font-size:1.35rem; font-weight:600; }
-.sec p{ margin:.25rem 0 0; color:var(--muted); font-size:.9rem; }
+.sec p{ margin:.25rem 0 0; color:var(--muted) !important; font-size:.9rem; }
 .eyebrow{ font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); font-weight:600; margin-bottom:.15rem; }
 
 /* ---- Panneaux ---- */
@@ -114,22 +118,26 @@ button[role="tab"][aria-selected="true"]{ background:var(--accent-soft) !importa
 [data-testid="stBaseButton-primary"]{ background:var(--accent) !important; border-color:var(--accent) !important; color:#0A101C !important; font-weight:600 !important; }
 [data-testid="stBaseButton-primary"]:hover{ background:#FF8F2B !important; }
 
-/* ---- Champs ---- */
-[data-baseweb="input"], [data-baseweb="base-input"], [data-baseweb="select"] > div, [data-baseweb="textarea"]{ background:var(--surface-2) !important; border-color:var(--line) !important; border-radius:10px !important; }
-input, textarea, [data-baseweb="select"] div{ color:var(--text) !important; }
-input, textarea{ background:transparent !important; -webkit-text-fill-color:var(--text) !important; caret-color:var(--accent); }
+/* ---- Champs : tous les calques du widget partagent fond et texte ---- */
+[data-testid="stNumberInput"] [data-baseweb], [data-testid="stSelectbox"] [data-baseweb], [data-testid="stTextInput"] [data-baseweb],
+[data-testid="stTextArea"] [data-baseweb], [data-testid="stNumberInputContainer"]{
+  background:var(--surface-2) !important; border-color:var(--line) !important; border-radius:10px !important; color:var(--text) !important; }
+input, textarea{ background:transparent !important; color:var(--text) !important; -webkit-text-fill-color:var(--text) !important; caret-color:var(--accent); }
+[data-testid="stSelectbox"] [data-baseweb="select"] *{ color:var(--text) !important; }
 [data-testid="stNumberInputStepDown"], [data-testid="stNumberInputStepUp"]{ background:transparent !important; color:var(--muted) !important; }
-[data-baseweb="select"] svg{ fill:var(--muted) !important; }
-[data-baseweb="popover"] [data-baseweb="menu"], [data-baseweb="popover"] ul{ background:var(--surface-2) !important; }
-[data-baseweb="popover"] li{ color:var(--text) !important; }
-[data-baseweb="popover"] li:hover, [data-baseweb="popover"] li[aria-selected="true"]{ background:var(--surface) !important; }
+[data-testid="stSelectbox"] svg, [data-testid="stNumberInput"] svg{ fill:var(--muted) !important; color:var(--muted) !important; }
+[data-baseweb="popover"] *{ color:var(--text) !important; }
+[data-baseweb="popover"] [data-baseweb="menu"], [data-baseweb="popover"] ul, [data-baseweb="popover"] li{ background:var(--surface-2) !important; }
+[data-baseweb="popover"] li:hover{ background:var(--surface) !important; }
 textarea{ font-family:var(--mono) !important; font-size:.8rem !important; }
-[data-testid="stRadio"] label{ color:var(--text); }
 
 /* ---- Alertes, expanders, métriques ---- */
-[data-testid="stAlert"]{ border-radius:10px; border:1px solid var(--line-soft); }
+[data-testid="stAlert"]{ border-radius:10px; border:1px solid var(--line) !important; background:var(--surface-2) !important; }
+[data-testid="stAlert"] *{ color:var(--text) !important; }
 [data-testid="stExpander"]{ border:1px solid var(--line-soft); border-radius:12px; background:var(--surface); }
-[data-testid="stExpander"] summary:hover{ color:var(--accent); }
+[data-testid="stExpander"] details{ background:var(--surface) !important; border:0 !important; }
+[data-testid="stExpander"] summary, [data-testid="stExpander"] summary *{ color:var(--text) !important; }
+[data-testid="stExpander"] summary:hover, [data-testid="stExpander"] summary:hover *{ color:var(--accent) !important; }
 [data-testid="stMetric"]{ background:var(--surface-2); border:1px solid var(--line-soft); border-radius:10px; padding:.8rem 1rem; }
 [data-testid="stMetricLabel"]{ color:var(--muted); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; }
 [data-testid="stMetricValue"]{ font-family:var(--mono) !important; font-size:1.4rem; }
