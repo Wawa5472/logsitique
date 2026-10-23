@@ -585,9 +585,60 @@ def render_flight_map(route, origin, dest, start_progress, style_name, flight_nu
 # -----------------------------------------------------------------------------
 def generate_packing_list_html(order, airport, shipper_name):
     rows = ""
+    total_general = 0.0
     for idx, item in enumerate(order["items"], 1):
-        rows += f"""<tr><td style="border: 1px solid #000; padding: 5px;">{idx}</td><td style="border: 1px solid #000; padding: 5px;">{item['nom']}</td><td style="border: 1px solid #000; padding: 5px;">Unité</td><td style="border: 1px solid #000; padding: 5px;">{item['qte']}</td><td style="border: 1px solid #000; padding: 5px;">-</td></tr>"""
-    return f"""<div style="font-family: Arial, sans-serif; padding: 30px; background: #fff; color: #000; max-width: 800px; margin: auto;"><div style="display: flex; justify-content: space-between; margin-bottom: 30px;"><div><h2 style="margin: 0 0 10px 0;">{shipper_name}</h2><div>Aéroport de {airport['ville']}</div><div>Code IATA: {airport['code']}</div></div><div style="text-align: right;"><h1 style="margin: 0; font-size: 24px;">Fiche de colisage</h1><div style="font-size: 12px; color: #555;">(Ceci n'est pas une facture)</div></div></div><table style="width: 100%; margin-bottom: 30px; font-size: 14px;"><tr><td style="width: 50%;"><b>Date :</b> {order['cree_le'].strftime("%d/%m/%Y")}</td><td style="width: 50%;"><b>Numéro commande :</b> {order['reference']}</td></tr></table><table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;"><thead><tr style="background-color: #f2f2f2;"><th style="border: 2px solid #000; padding: 8px;">Partie #</th><th style="border: 2px solid #000; padding: 8px;">Désignation</th><th style="border: 2px solid #000; padding: 8px;">Type d'unité</th><th style="border: 2px solid #000; padding: 8px;">Quantité</th><th style="border: 2px solid #000; padding: 8px;">Reste</th></tr></thead><tbody>{rows}</tbody></table></div>"""
+        total_ligne = item['qte'] * item['prix_u']
+        total_general += total_ligne
+        rows += f"""<tr>
+            <td style="border: 1px solid #000; padding: 5px;">{idx}</td>
+            <td style="border: 1px solid #000; padding: 5px;">{item['nom']}</td>
+            <td style="border: 1px solid #000; padding: 5px; text-align: center;">Unité</td>
+            <td style="border: 1px solid #000; padding: 5px; text-align: center;">{item['qte']}</td>
+            <td style="border: 1px solid #000; padding: 5px; text-align: right;">{item['prix_u']:,.2f} €</td>
+            <td style="border: 1px solid #000; padding: 5px; text-align: right; font-weight: bold;">{total_ligne:,.2f} €</td>
+            <td style="border: 1px solid #000; padding: 5px; text-align: center;">-</td>
+        </tr>"""
+    
+    return f"""<div style="font-family: Arial, sans-serif; padding: 30px; background: #fff; color: #000; max-width: 800px; margin: auto;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+            <div>
+                <h2 style="margin: 0 0 10px 0;">{shipper_name}</h2>
+                <div>Aéroport de {airport['ville']}</div>
+                <div>Code IATA: {airport['code']}</div>
+            </div>
+            <div style="text-align: right;">
+                <h1 style="margin: 0; font-size: 24px;">Fiche de colisage</h1>
+            </div>
+        </div>
+        <table style="width: 100%; margin-bottom: 30px; font-size: 14px;">
+            <tr>
+                <td style="width: 50%;"><b>Date :</b> {order['cree_le'].strftime("%d/%m/%Y")}</td>
+                <td style="width: 50%;"><b>Numéro commande :</b> {order['reference']}</td>
+            </tr>
+        </table>
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+            <thead>
+                <tr style="background-color: #f2f2f2;">
+                    <th style="border: 2px solid #000; padding: 8px;">Partie #</th>
+                    <th style="border: 2px solid #000; padding: 8px;">Désignation</th>
+                    <th style="border: 2px solid #000; padding: 8px; text-align: center;">Type d'unité</th>
+                    <th style="border: 2px solid #000; padding: 8px; text-align: center;">Quantité</th>
+                    <th style="border: 2px solid #000; padding: 8px; text-align: right;">Prix Unitaire</th>
+                    <th style="border: 2px solid #000; padding: 8px; text-align: right;">Montant Total</th>
+                    <th style="border: 2px solid #000; padding: 8px; text-align: center;">Reste</th>
+                </tr>
+            </thead>
+            <tbody>
+                {rows}
+            </tbody>
+            <tfoot>
+                <tr style="background-color: #f9f9f9; font-weight: bold;">
+                    <td colspan="5" style="border: 2px solid #000; padding: 8px; text-align: right;">TOTAL GÉNÉRAL :</td>
+                    <td colspan="2" style="border: 2px solid #000; padding: 8px; text-align: right; color: #D97706; font-size: 14px;">{total_general:,.2f} €</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>"""
 
 
 def generate_awb_html(order, airport, shipper_name, flight_code):
