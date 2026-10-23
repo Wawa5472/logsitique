@@ -1,6 +1,6 @@
 """
 Air Cargo Hub — Logistique internationale
-Interface intégrale : Devis détaillé, Fournisseur complet, Suivi 3D (vitesse restaurée), 
+Interface intégrale : Devis détaillé, Fournisseur complet, Suivi 3D (vitesse, flotte, zones interdites), 
 Douane, et Gestion Documentaire Légale Totale (Obligatoire + Facultatif en HTML).
 
 Lancer :  pip install streamlit pandas
@@ -142,7 +142,7 @@ def build_route(start, end):
     return route, km
 
 # -----------------------------------------------------------------------------
-# CARTE MAPLIBRE + DECK.GL (AVEC SÉLECTEUR DE VITESSE RESTAURÉ)
+# CARTE MAPLIBRE + DECK.GL (AVEC ZONES INTERDITES ET VITESSE)
 # -----------------------------------------------------------------------------
 MAP_HTML = r"""
 <!doctype html><html><head><meta charset="utf-8">
@@ -175,6 +175,7 @@ MAP_HTML = r"""
  .lbl{background:#fff;color:#0E2A47;font-weight:700;font-size:11px;padding:3px 8px;border-radius:99px;white-space:nowrap}
  .lbl.red{background:#C62828;color:#fff}.lbl.green{background:#2E7D32;color:#fff}
  .fl{font-size:10px;font-weight:600;color:#37474f;text-align:center;white-space:nowrap;text-shadow:0 0 3px #fff}
+ .zone-lbl{background:rgba(185,28,28,0.8);color:#fff;font-size:10px;padding:2px 6px;border-radius:4px;border:1px solid #ef4444;pointer-events:none}
 </style></head><body>
 <div id="map"></div><div class="flight-card" id="flight-card"></div>
 <div class="hud">
@@ -213,12 +214,36 @@ function lab(txt,cls,lngLat){const e=document.createElement('div');e.className='
 let overlay=null, planeM, fleetM=[], playing=false, t=D.start, follow=true, lastTs=null, curB=0, clock=0, mult=1;
 
 map.on('load',()=>{
+  // 1. Zones d'exclusion aérienne (NO_FLY)
+  if(D.no_fly) {
+    D.no_fly.forEach((zone, i) => {
+      map.addSource('nofly-'+i, {
+        'type': 'geojson',
+        'data': { 'type': 'Feature', 'geometry': { 'type': 'Polygon', 'coordinates': [zone.ring] } }
+      });
+      map.addLayer({
+        'id': 'nofly-fill-'+i, 'type': 'fill', 'source': 'nofly-'+i,
+        'paint': { 'fill-color': '#EF4444', 'fill-opacity': 0.15 }
+      });
+      map.addLayer({
+        'id': 'nofly-line-'+i, 'type': 'line', 'source': 'nofly-'+i,
+        'paint': { 'line-color': '#B91C1C', 'line-width': 1.5, 'line-dasharray': [4, 4] }
+      });
+      const el = document.createElement('div');
+      el.className = 'zone-lbl';
+      el.textContent = '⚠️ ' + zone.name;
+      new maplibregl.Marker({element: el}).setLngLat(zone.ring[0]).addTo(map);
+    });
+  }
+
+  // 2. Trajet principal
   map.addSource('plan',{type:'geojson',data:{type:'Feature',geometry:{type:'LineString',coordinates:D.route}}});
   map.addLayer({id:'plan',type:'line',source:'plan',paint:{'line-color':'#90A4AE','line-width':3,'line-dasharray':[1.5,2.5]}});
   map.addSource('trail',{type:'geojson',data:{type:'Feature',geometry:{type:'LineString',coordinates:[D.route[0],D.route[0]]}}});
   map.addLayer({id:'trail',type:'line',source:'trail',paint:{'line-color':'#FF5A00','line-width':5}});
   lab(D.origin.code,'red',[D.origin.lon,D.origin.lat]); lab(D.dest.code,'green',[D.dest.lon,D.dest.lat]);
   
+  // 3. Flotte annexe
   D.fleet.forEach(f=>{
     const w=document.createElement('div');
     w.innerHTML = `<div class="svg-container">${PLANE('#78909C',20)}</div><div class="fl">${f.code}</div>`;
@@ -309,7 +334,8 @@ def render_flight_map(route, origin, dest, start_progress, style_name, flight_nu
     data = {
         "model": model_data, "photo": photo_b64, "flight_num": flight_num, "plane_model": "Boeing 777F", 
         "route": route, "origin": origin, "dest": dest, "fleet": fleet, "style": style, 
-        "start": start_progress, "center": [(origin["lon"] + dest["lon"]) / 2, (origin["lat"] + dest["lat"]) / 2]
+        "start": start_progress, "center": [(origin["lon"] + dest["lon"]) / 2, (origin["lat"] + dest["lat"]) / 2],
+        "no_fly": NO_FLY
     }
     components.html(MAP_HTML.replace("__DATA__", json.dumps(data)), height=height, scrolling=False)
 
