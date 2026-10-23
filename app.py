@@ -29,7 +29,7 @@ st.set_page_config(
 )
 
 # -----------------------------------------------------------------------------
-# DESIGN : Thème clair, moderne et hautement contrasté
+# DESIGN : Thème clair, moderne, espacé et aéré
 # -----------------------------------------------------------------------------
 APP_CSS = """
 <style>
@@ -85,14 +85,36 @@ hr{ border-color:var(--line-soft); }
 .tb-stat b{ display:block; font-family:var(--mono); font-size:1.4rem; font-weight:600; color:var(--text); }
 .tb-stat span{ font-size:.7rem; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); }
 
-/* ---- Navigation (onglets en segments) ---- */
-[data-baseweb="tab-list"], [role="tablist"]{ gap:6px !important; background:var(--surface) !important; border:1px solid var(--line) !important;
-  padding:6px !important; border-radius:14px !important; width:fit-content !important; max-width:100%; overflow-x:auto; }
-button[role="tab"]{ height:40px; padding:0 20px !important; border-radius:10px !important; background:transparent !important;
-  color:var(--muted) !important; font-weight:500; border:0 !important; }
-button[role="tab"] p{ color:inherit !important; font-size:.9rem; }
-button[role="tab"]:hover{ color:var(--text) !important; background:rgba(0,0,0,.04) !important; }
-button[role="tab"][aria-selected="true"]{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; box-shadow: 0 2px 10px rgba(217,119,6,0.3); }
+/* ---- Navigation aérée et espacée (Onglets professionnels) ---- */
+[data-baseweb="tab-list"], [role="tablist"]{ 
+  gap: 16px !important; 
+  background: var(--surface) !important; 
+  border: 1px solid var(--line) !important;
+  padding: 10px 16px !important; 
+  border-radius: 14px !important; 
+  width: 100% !important; 
+  display: flex !important;
+  justify-content: space-between !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  margin-bottom: 1.5rem !important;
+  overflow-x: auto; 
+}
+button[role="tab"]{ 
+  flex: 1;
+  height: 44px !important; 
+  padding: 0 16px !important; 
+  border-radius: 10px !important; 
+  background: transparent !important;
+  color: var(--muted) !important; 
+  font-weight: 500; 
+  border: 0 !important; 
+  white-space: nowrap !important;
+  transition: all 0.2s ease;
+}
+button[role="tab"] p{ color: inherit !important; font-size: 0.95rem !important; font-weight: 500; }
+button[role="tab"]:hover{ color: var(--text) !important; background: rgba(0,0,0,.04) !important; }
+button[role="tab"][aria-selected="true"]{ background: var(--accent) !important; color: #fff !important; font-weight: 600 !important; box-shadow: 0 2px 10px rgba(217,119,6,0.3); }
+button[role="tab"][aria-selected="true"] p{ color: #fff !important; }
 [data-baseweb="tab-highlight"], [data-baseweb="tab-border"]{ display:none !important; height:0 !important; background:transparent !important; }
 [data-baseweb="tab-panel"]{ padding-top:1.8rem; }
 
